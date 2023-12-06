@@ -1,8 +1,6 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -35,6 +33,9 @@ jobs:
 
       - name: Run chmod to make gradlew executable
         run: chmod +x ./gradlew
+
+      - name: Check code style with ktlint
+        run: ./gradlew ktlintCheck --daemon
 
       - name: Build with Gradle
         uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
