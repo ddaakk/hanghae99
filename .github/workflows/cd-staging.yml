@@ -1,8 +1,8 @@
-name: Java CI with Gradle
+name: cd-prod
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "staging" ]
 
 permissions:
   contents: read
