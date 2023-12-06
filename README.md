@@ -8,3 +8,4 @@
 * 서버 Phase 에 따른 yml 분리(dev, staging, prod)
 * CI/CD 배포를 위한 Github Action 추가
 * Github Action에 Lint 과정 추가
+* Github Action에 test 검증 과정 추가
