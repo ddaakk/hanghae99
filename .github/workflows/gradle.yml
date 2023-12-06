@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: Kotlin CD with Gradle
 
 on:
   push:
