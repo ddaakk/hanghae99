@@ -13,25 +13,25 @@ env:
     ECR_REPOSITORY: deploy-repository
 
 jobs:
-#    test:
-#        name: Check Test Code
-#        runs-on: ubuntu-latest
-#
-#        steps:
-#            -   name: Checkout code
-#                uses: actions/checkout@v2
-#
-#            -   name: Set up JDK 17
-#                uses: actions/setup-java@v3
-#                with:
-#                    java-version: '17'
-#                    distribution: 'temurin'
-#
-#            -   name: Grant execute permission for Gradlew
-#                run: chmod +x gradlew
-#
-#            -   name: Run tests
-#                run: ./gradlew test
+    test:
+        name: Check Test Code
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Checkout code
+                uses: actions/checkout@v2
+
+            -   name: Set up JDK 17
+                uses: actions/setup-java@v3
+                with:
+                    java-version: '17'
+                    distribution: 'temurin'
+
+            -   name: Grant execute permission for Gradlew
+                run: chmod +x gradlew
+
+            -   name: Run tests
+                run: ./gradlew test
 
     deploy:
         name: Build Code
