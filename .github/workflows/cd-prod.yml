@@ -9,11 +9,17 @@ permissions:
 
 jobs:
     deploy:
-        name: CD / Deploy ECR, ECS
+        name: Deploy ECR, ECS
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
               uses: actions/checkout@v2
+
+            - name: Download JAR artifact
+              uses: actions/download-artifact@v2
+              with:
+                name: artifact
+                path: build/libs/
 
             - name: Docker build
               run: |
