@@ -7,6 +7,11 @@ on:
 permissions:
     contents: read
 
+env:
+    AWS_REGION: ap-northeast-2
+    ECR_REGISTRY: 323560384833.dkr.ecr.ap-northeast-2.amazonaws.com/deploy-repository
+    ECR_REPOSITORY: deploy-repository
+
 jobs:
     test:
         name: Check Test Code
