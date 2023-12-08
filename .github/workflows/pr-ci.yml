@@ -37,6 +37,7 @@ jobs:
         run: ./gradlew test
 
   build:
+      name: Build Code
       needs: [ktlint, test]
       runs-on: ubuntu-latest
       steps:
