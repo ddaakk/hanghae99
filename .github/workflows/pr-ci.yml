@@ -38,36 +38,30 @@ jobs:
 
   build:
       name: Build Code
-      needs: [ktlint, test]
+      needs: [ ktlint, test ]
       runs-on: ubuntu-latest
       steps:
-          - uses: actions/checkout@v3
-          - uses: actions/cache@v3
-            with:
-                path: |
-                    ~/.gradle/caches
-                    ~/.gradle/wrapper
-                key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-                restore-keys: |
-                    ${{ runner.os }}-gradle-
+          -   uses: actions/checkout@v3
+          -   uses: actions/cache@v3
+              with:
+                  path: |
+                      ~/.gradle/caches
+                      ~/.gradle/wrapper
+                  key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+                  restore-keys: |
+                      ${{ runner.os }}-gradle-
 
-          - name: Set up JDK 17
-            uses: actions/setup-java@v3
-            with:
-                java-version: '17'
-                distribution: 'temurin'
+          -   name: Set up JDK 17
+              uses: actions/setup-java@v3
+              with:
+                  java-version: '17'
+                  distribution: 'temurin'
 
-          - name: Run chmod to make gradlew executable
-            run: chmod +x ./gradlew
+          -   name: Run chmod to make gradlew executable
+              run: chmod +x ./gradlew
 
-          - name: Build with Gradle
-            uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
-            with:
-                arguments: build
-
-          - name: Upload JAR artifact
-            uses: actions/upload-artifact@v2
-            with:
-              name: my-artifact
-              path: build/libs/*.jar
+          -   name: Build with Gradle
+              uses: gradle/gradle-build-action@67421db6bd0bf253fb4bd25b31ebb98943c375e1
+              with:
+                  arguments: build
 
