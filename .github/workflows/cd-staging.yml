@@ -99,7 +99,7 @@ jobs:
                 uses: aws-actions/amazon-ecs-deploy-task-definition@v1
                 with:
                     task-definition: ${{ steps.setting-task-definition.outputs.task-definition }}
-                    service: deploy-staging-service
+                    service: deploy-stage-service
                     cluster: deploy-fargate-cluster
                     wait-for-service-stability: false
 
