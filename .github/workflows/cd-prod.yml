@@ -57,9 +57,6 @@ jobs:
                 with:
                     arguments: build
 
-            -   name: Checkout code
-                uses: actions/checkout@v2
-
             -   name: Docker build
                 run: |
                     docker login -u ${{ secrets.DOCKER_ID }} -p ${{ secrets.DOCKER_PWD }}
