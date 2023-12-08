@@ -87,7 +87,7 @@ jobs:
                 id: setting-task-definition
                 uses: aws-actions/amazon-ecs-render-task-definition@v1
                 with:
-                    task-definition: deploy-prod-taskdefinition.json
+                    task-definition: deploy-prod-taskdefinition-revision1.json
                     container-name: deploy-prod-container
                     image: ${{ steps.build-image.outputs.image }}
 
