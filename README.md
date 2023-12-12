@@ -9,3 +9,6 @@
 * CI/CD 배포를 위한 Github Action 추가
 * Github Action에 Lint 과정 추가
 * Github Action에 test 검증 과정 추가
+
+### 컨벤션
+1. custom setter나 backing property를 사용해서 setter에 접근제어자 제한이 가능하지만 setter를 public으로 열어두고 사용하지 않는 방식을 사용
