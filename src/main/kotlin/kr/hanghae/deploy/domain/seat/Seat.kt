@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import kr.hanghae.deploy.domain.bookabledate.BookableDate
 import kr.hanghae.deploy.domain.booking.Booking
 import kr.hanghae.deploy.domain.common.BaseEntity
+import kr.hanghae.deploy.domain.payment.Payment
 
 @Entity
 class Seat (
@@ -13,6 +14,13 @@ class Seat (
 
     @ManyToOne(fetch = FetchType.LAZY)
     val booking: Booking?,
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    val payment: Payment?,
+
+    val order: Long = 1L,
+
+    val price: Long = 0L,
 
     @Enumerated(EnumType.STRING)
     val seatStatus: SeatStatus = SeatStatus.BOOKABLE,
