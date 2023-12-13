@@ -18,7 +18,7 @@ class Seat (
     @ManyToOne(fetch = FetchType.LAZY)
     val payment: Payment?,
 
-    val order: Long = 1L,
+    val orders: Long = 1L,
 
     val price: Long = 0L,
 

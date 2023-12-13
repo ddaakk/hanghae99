@@ -17,6 +17,8 @@ class Booking (
     @OneToOne(mappedBy = "booking", cascade = [CascadeType.ALL], orphanRemoval = true)
     val payment: Payment,
 
+    val number: String,
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
