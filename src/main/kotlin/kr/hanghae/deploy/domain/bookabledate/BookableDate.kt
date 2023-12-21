@@ -6,15 +6,24 @@ import kr.hanghae.deploy.domain.seat.Seat
 import java.time.LocalDate
 
 @Entity
+@Table
 class BookableDate(
+    seats: MutableList<Seat> = mutableListOf(),
+    date: String,
+) : BaseEntity() {
     @OneToMany(mappedBy = "bookableDate", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val seats: MutableList<Seat> = mutableListOf(),
+    var seats: MutableList<Seat> = seats
+        protected set
 
-    val date: LocalDate,
+    @Column(nullable = false) // length 지정
+    var date: String = date
+        protected set
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long? = null,
-) : BaseEntity() {
+    val id: Long? = null
 
+    fun updateSeats(seats: MutableList<Seat>) {
+        this.seats = seats
+    }
 }

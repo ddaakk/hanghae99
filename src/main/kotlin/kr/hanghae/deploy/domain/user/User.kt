@@ -9,9 +9,9 @@ import java.util.*
 @Entity
 @Table(name = "USERS")
 class User(
-    val token: String = UUID.randomUUID().toString(),
+    val uuid: String,
 
-    val balance: Long = 0L,
+    var balance: Long = 0L,
 
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     val booking: MutableList<Booking> = mutableListOf(),
@@ -20,4 +20,8 @@ class User(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
     ) : BaseEntity() {
+
+        fun chargeBalance(balance: Long) {
+            this.balance += balance
+        }
 }

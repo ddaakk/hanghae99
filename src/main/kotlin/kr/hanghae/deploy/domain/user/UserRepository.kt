@@ -1,6 +1,7 @@
 package kr.hanghae.deploy.domain.user
 
-import org.springframework.data.jpa.repository.JpaRepository
+interface UserRepository {
+    fun findByUuid(uuid: String): User?
 
-interface UserRepository : JpaRepository<User, Long> {
+    fun deleteByUuid(uuid: String)
 }

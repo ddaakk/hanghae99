@@ -4,6 +4,7 @@ import jakarta.persistence.*
 import kr.hanghae.deploy.domain.booking.Booking
 import kr.hanghae.deploy.domain.common.BaseEntity
 import kr.hanghae.deploy.domain.seat.Seat
+import kr.hanghae.deploy.domain.user.User
 
 @Entity
 class Payment(
@@ -11,7 +12,10 @@ class Payment(
     val booking: Booking,
 
     @Enumerated(EnumType.STRING)
-    val payStatus: PayStatus = PayStatus.NOT_PAID,
+    var payStatus: PayStatus = PayStatus.NOT_PAID,
+
+    @OneToOne(fetch = FetchType.LAZY)
+    val user: User,
 
     @OneToMany(mappedBy = "payment", cascade = [CascadeType.ALL], orphanRemoval = true)
     val seats: MutableList<Seat> = mutableListOf(),

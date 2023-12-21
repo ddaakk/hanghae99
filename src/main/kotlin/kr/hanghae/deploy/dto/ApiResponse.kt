@@ -1,7 +1,5 @@
 package kr.hanghae.deploy.dto
 
-import kr.hanghae.deploy.domain.user.User
-import kr.hanghae.deploy.dto.user.response.ApplyTokenResponse
 import org.springframework.http.HttpStatus
 
 data class ApiResponse<T>(
@@ -26,6 +24,10 @@ data class ApiResponse<T>(
 
         fun <T> ok(data: T): ApiResponse<T> {
             return of(HttpStatus.OK, data)
+        }
+
+        fun <T> created(data:T): ApiResponse<T> {
+            return of(HttpStatus.CREATED, data)
         }
     }
 }
