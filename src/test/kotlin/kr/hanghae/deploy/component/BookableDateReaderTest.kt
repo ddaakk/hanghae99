@@ -7,8 +7,8 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import kr.hanghae.deploy.domain.bookabledate.BookableDate
-import kr.hanghae.deploy.domain.bookabledate.BookableDateRepository
+import kr.hanghae.deploy.domain.BookableDate
+import kr.hanghae.deploy.repository.BookableDateRepository
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
@@ -34,7 +34,7 @@ class BookableDateReaderTest : DescribeSpec({
         }
     }
 
-    describe("reader fail") {
+    describe("reader 실패") {
         context("전체 예약 가능 날짜 조회를 시도한다") {
 
             every { bookableDateRepository.findByDate() } returns listOf()
@@ -47,7 +47,7 @@ class BookableDateReaderTest : DescribeSpec({
         }
     }
 
-    describe("readerByDate") {
+    describe("getByDate") {
         context("예약 가능한 날에 해당하는") {
 
             val firstBookableDate = BookableDate(date = "2023-12-01")
@@ -55,21 +55,21 @@ class BookableDateReaderTest : DescribeSpec({
             every { bookableDateRepository.findByDate("2023-12-01") } returns firstBookableDate
 
             it("예약 가능 일자 정보를 조회한다") {
-                val bookableDate = bookableDateReader.readerByDate("2023-12-01")
+                val bookableDate = bookableDateReader.getByDate("2023-12-01")
                 bookableDate.date shouldBe "2023-12-01"
                 bookableDate.seats shouldBe emptyList()
             }
         }
     }
 
-    describe("readerByDate Fail") {
+    describe("getByDate 살패") {
         context("예약 가능한 날에 해당하는") {
 
             every { bookableDateRepository.findByDate("2023-12-01") } returns null
 
             it("해당하는 예약 가능 일자가 존재하지 않는다") {
                 shouldThrow<RuntimeException> {
-                    bookableDateReader.readerByDate("2023-12-01")
+                    bookableDateReader.getByDate("2023-12-01")
                 }.message shouldBe "예약할 수 없는 날짜입니다."
             }
         }

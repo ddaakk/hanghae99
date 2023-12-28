@@ -1,7 +1,7 @@
 package kr.hanghae.deploy.component
 
-import kr.hanghae.deploy.domain.bookabledate.BookableDate
-import kr.hanghae.deploy.domain.bookabledate.BookableDateRepository
+import kr.hanghae.deploy.domain.BookableDate
+import kr.hanghae.deploy.repository.BookableDateRepository
 import org.springframework.stereotype.Component
 import java.lang.RuntimeException
 
@@ -18,7 +18,7 @@ class BookableDateReader(
        }
     }
 
-    fun readerByDate(date: String): BookableDate {
+    fun getByDate(date: String): BookableDate {
         return bookableDateRepository.findByDate(date) ?: throw RuntimeException("예약할 수 없는 날짜입니다.")
     }
 

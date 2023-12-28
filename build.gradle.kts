@@ -39,8 +39,9 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("io.github.microutils:kotlin-logging-jvm:2.0.11")
-    implementation("org.springframework.boot:spring-boot-starter-amqp")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.2")
+    implementation("com.fasterxml.uuid:java-uuid-generator:4.3.0")
     runtimeOnly("com.h2database:h2")
 
     compileOnly("org.projectlombok:lombok")

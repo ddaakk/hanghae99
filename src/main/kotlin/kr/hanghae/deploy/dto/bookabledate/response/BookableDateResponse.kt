@@ -1,17 +1,17 @@
 package kr.hanghae.deploy.dto.bookabledate.response
 
-import kr.hanghae.deploy.domain.bookabledate.BookableDate
+import kr.hanghae.deploy.domain.BookableDate
 
 data class BookableDateResponse(
     val date: String,
-    val seatOrders: List<Long>
+    val seatNumbers: List<Int>
 ) {
 
     companion object {
         fun of(bookableDate: BookableDate): BookableDateResponse {
             return BookableDateResponse(
                 date = bookableDate.date,
-                seatOrders = bookableDate.seats.map { it.orders }
+                seatNumbers = bookableDate.seats.map { it.number }
             )
         }
     }

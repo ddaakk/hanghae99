@@ -7,10 +7,10 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import kr.hanghae.deploy.component.SeatReader
-import kr.hanghae.deploy.domain.bookabledate.BookableDate
-import kr.hanghae.deploy.domain.seat.Seat
+import kr.hanghae.deploy.domain.BookableDate
+import kr.hanghae.deploy.domain.Concert
+import kr.hanghae.deploy.domain.Seat
 import kr.hanghae.deploy.dto.seat.SeatServiceRequest
-import kr.hanghae.deploy.dto.seat.response.SeatResponse
 import org.junit.jupiter.api.extension.ExtendWith
 
 @ExtendWith(MockKExtension::class)
@@ -22,24 +22,20 @@ class SeatServiceTest: DescribeSpec({
     describe("getSeatsByDate") {
         context("예약 가능한 날에 해당하는") {
 
+            val concert = Concert(name = "고척돔")
             val bookableDate = BookableDate(date = "2023-12-01")
-            val firstSeat = Seat(bookableDate = bookableDate, orders = 1)
-            val secondSeat = Seat(bookableDate = bookableDate, orders = 2)
+            val firstSeat = Seat(bookableDate = bookableDate, number = 1, concert = concert, grade = "A")
+            val secondSeat = Seat(bookableDate = bookableDate, number = 2, concert = concert, grade = "A")
             val serviceRequest = SeatServiceRequest(date = "2023-12-01")
 
             val seats = listOf(firstSeat, secondSeat)
 
-            every { seatReader.readerByDate(date = "2023-12-01") } returns seats
-
-            val seatResponses = listOf(
-                SeatResponse.of(seat = firstSeat),
-                SeatResponse.of(seat = secondSeat),
-            )
+            every { seatReader.getByDate(date = "2023-12-01") } returns seats
 
             it("좌석들을 조회한다") {
-                val response =  seatService.getSeatsByDate(serviceRequest)
+                val response = seatService.getSeatsByDate(serviceRequest)
                 response shouldHaveSize 2
-                response shouldBe seatResponses
+                response shouldBe seats
             }
         }
     }

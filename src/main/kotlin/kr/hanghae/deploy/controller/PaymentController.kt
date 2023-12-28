@@ -1,6 +1,7 @@
 package kr.hanghae.deploy.controller
 
 import kr.hanghae.deploy.dto.ApiResponse
+import kr.hanghae.deploy.dto.payment.PayBookingServiceRequest
 import kr.hanghae.deploy.dto.payment.request.PaymentRequest
 import kr.hanghae.deploy.dto.payment.response.PaymentResponse
 import kr.hanghae.deploy.service.PaymentService
@@ -20,6 +21,15 @@ class PaymentController(
         @RequestBody request: PaymentRequest,
         @RequestHeader("Authorization") uuid: String,
     ): ApiResponse<PaymentResponse> {
-        return ApiResponse.created(paymentService.payBooking(request, uuid))
+        return ApiResponse.created(
+            data = PaymentResponse.of(
+                paymentService.payBooking(
+                    PayBookingServiceRequest.toService(
+                        bookingNumber = request.bookingNumber,
+                        uuid = uuid
+                    )
+                )
+            )
+        )
     }
 }

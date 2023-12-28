@@ -1,29 +1,33 @@
 package kr.hanghae.deploy.service
 
-import kr.hanghae.deploy.domain.booking.BookingRepository
-import kr.hanghae.deploy.domain.payment.PayStatus
-import kr.hanghae.deploy.domain.payment.Payment
-import kr.hanghae.deploy.domain.payment.PaymentRepository
-import kr.hanghae.deploy.dto.payment.request.PaymentRequest
-import kr.hanghae.deploy.dto.payment.response.PaymentResponse
+import kr.hanghae.deploy.component.BookingReader
+import kr.hanghae.deploy.component.UserReader
+import kr.hanghae.deploy.domain.PayStatus
+import kr.hanghae.deploy.domain.Payment
+import kr.hanghae.deploy.dto.payment.PayBookingServiceRequest
+import kr.hanghae.deploy.repository.PaymentRepository
+import kr.hanghae.deploy.repository.PaymentRepositoryImpl
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional(readOnly = true)
 class PaymentService (
-    private val paymentRepository: PaymentRepository,
+    private val paymentRepositoryImpl: PaymentRepositoryImpl,
+    private val userReader: UserReader,
+    private val bookingReader: BookingReader,
 ){
     @Transactional
-    fun payBooking(request: PaymentRequest, uuid: String): PaymentResponse {
-        val payment = paymentRepository.findByBookingNumber(uuid, request.bookingNumber)
+    fun payBooking(request: PayBookingServiceRequest): Payment {
+        val (bookingNumber, uuid) = request
 
-        payment ?: throw IllegalArgumentException("존재하지 않는 예약입니다.")
+        val user = userReader.getByUUID(uuid);
+        val booking = bookingReader.getByBookingNumber(bookingNumber, uuid)
 
-        payment.payStatus = PayStatus.PAY_COMPLETE
+        user.payBookingSeats(totalPrice = booking.getTotalPrice())
+        val payment = Payment(booking, status = PayStatus.PAY_COMPLETE)
+        val savedPayment = paymentRepositoryImpl.saveAndFlush(payment)
+        booking.updatePayment(savedPayment)
 
-        return PaymentResponse.of(payment)
+        return savedPayment
     }
-
-
 }

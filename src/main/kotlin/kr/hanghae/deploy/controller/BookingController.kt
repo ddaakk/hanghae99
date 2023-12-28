@@ -20,11 +20,13 @@ class BookingController(
         @RequestHeader("Authorization") uuid: String,
     ): ApiResponse<BookingResponse> {
         return ApiResponse.created(
-            data = bookingService.requestBooking(
-                request = BookingServiceRequest.toService(
-                    date = request.date,
-                    seatOrder = request.seatOrder,
-                    uuid = uuid,
+            data = BookingResponse.of(
+                bookingService.requestBooking(
+                    request = BookingServiceRequest.toService(
+                        date = request.date,
+                        seatNumbers = request.seatNumbers,
+                        uuid = uuid,
+                    )
                 )
             )
         )

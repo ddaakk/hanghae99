@@ -2,14 +2,14 @@ package kr.hanghae.deploy.dto.booking
 
 data class BookingServiceRequest(
     val date: String,
-    val seatOrder: List<Long>,
+    val seatNumbers: List<Int>,
     val uuid: String,
 ) {
     companion object {
-        fun toService(date: String, seatOrder: List<Long>, uuid: String): BookingServiceRequest {
+        fun toService(date: String, seatNumbers: List<Int>, uuid: String): BookingServiceRequest {
             return BookingServiceRequest(
                 date = date,
-                seatOrder = seatOrder,
+                seatNumbers = seatNumbers,
                 uuid = uuid,
             )
         }

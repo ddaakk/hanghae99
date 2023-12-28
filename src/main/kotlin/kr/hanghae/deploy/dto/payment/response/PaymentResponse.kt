@@ -1,14 +1,12 @@
 package kr.hanghae.deploy.dto.payment.response
 
-import kr.hanghae.deploy.domain.booking.Booking
-import kr.hanghae.deploy.domain.payment.PayStatus
-import kr.hanghae.deploy.domain.payment.Payment
-import kr.hanghae.deploy.dto.booking.response.BookingResponse
+import kr.hanghae.deploy.domain.PayStatus
+import kr.hanghae.deploy.domain.Payment
 
 data class PaymentResponse(
     val uuid: String,
     val bookingNumber: String,
-    val seatOrder: List<Long> = mutableListOf(),
+    val seatNumbers: List<Int> = mutableListOf(),
     val totalPrice: Long,
     val paymentStatus: PayStatus
     ) {
@@ -16,11 +14,11 @@ data class PaymentResponse(
     companion object {
         fun of(payment: Payment): PaymentResponse {
             return PaymentResponse(
-                uuid = payment.user.uuid,
+                uuid = payment.booking.user.uuid,
                 bookingNumber = payment.booking.number,
-                seatOrder = payment.seats.map { it.orders }.toList(),
-                totalPrice = payment.seats.sumOf { it.price },
-                paymentStatus = payment.payStatus,
+                seatNumbers = payment.booking.seats.map { it.number }.toList(),
+                totalPrice = payment.booking.seats.sumOf { it.price },
+                paymentStatus = payment.status,
             )
         }
     }

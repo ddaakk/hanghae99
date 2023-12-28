@@ -7,7 +7,7 @@ import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
 import kr.hanghae.deploy.component.BookableDateReader
-import kr.hanghae.deploy.domain.bookabledate.BookableDate
+import kr.hanghae.deploy.domain.BookableDate
 import kr.hanghae.deploy.dto.bookabledate.response.BookableDateResponse
 import org.junit.jupiter.api.extension.ExtendWith
 

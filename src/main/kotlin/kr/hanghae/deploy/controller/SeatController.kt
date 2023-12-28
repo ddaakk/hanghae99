@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
+import java.util.stream.Collectors
 
 @RestController
 class SeatController(
@@ -19,6 +20,11 @@ class SeatController(
     fun getSeatsByDate(
         @QueryStringArgResolver request: SeatRequest,
     ): ApiResponse<List<SeatResponse>> {
-        return ApiResponse.ok(data = seatService.getSeatsByDate(request = SeatServiceRequest.toService(request.date)))
+        return ApiResponse.ok(
+            data = seatService.getSeatsByDate(request = SeatServiceRequest.toService(request.date))
+                .stream()
+                .map(SeatResponse::of)
+                .collect(Collectors.toList())
+        )
     }
 }

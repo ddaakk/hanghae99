@@ -4,18 +4,17 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import jakarta.servlet.*
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import kr.hanghae.deploy.domain.emitter.EmitterRepository
+import kr.hanghae.deploy.component.UserReader
+import kr.hanghae.deploy.repository.EmitterRepository
 import kr.hanghae.deploy.dto.ApiResponse
 import kr.hanghae.deploy.service.UserService
-import org.springframework.context.annotation.Profile
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
-@Component
+//@Component
 class AuthFilter(
-    private val userService: UserService,
     private val objectMapper: ObjectMapper,
-    private val emitterRepository: EmitterRepository,
+    private val userReader: UserReader,
 ) : Filter {
 
     @Throws(ServletException::class)
@@ -33,20 +32,20 @@ class AuthFilter(
             return
         }
 
-        if (!userService.verifyUser(token)) {
+        if (!userReader.existByUUID(token)) {
             sendTokenError(httpResponse,
                 ApiResponse.of(HttpStatus.UNAUTHORIZED, "인증되지 않은 사용자입니다.", null))
             return
         }
 
-        if (emitterRepository.getFinishEmitters().filterKeys { it.startsWith(token) }.isEmpty()) {
-            sendTokenError(httpResponse,
-                ApiResponse.of(HttpStatus.TOO_EARLY, "아직 대기열 순번에 도달하지 않았습니다.", null))
-            return
-        }
+//        if (emitterRepository.getFinishEmitters().filterKeys { it.startsWith(token) }.isEmpty()) {
+//            sendTokenError(httpResponse,
+//                ApiResponse.of(HttpStatus.TOO_EARLY, "아직 대기열 순번에 도달하지 않았습니다.", null))
+//            return
+//        }
 
-        userService.deleteUser(token)
-        emitterRepository.deleteFinishById(token)
+//        userService.deleteUser(token)
+//        emitterRepository.deleteFinishById(token)
 
         chain?.doFilter(request, response)
     }

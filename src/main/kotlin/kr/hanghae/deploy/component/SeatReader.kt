@@ -1,7 +1,7 @@
 package kr.hanghae.deploy.component
 
-import kr.hanghae.deploy.domain.seat.Seat
-import kr.hanghae.deploy.domain.seat.SeatRepository
+import kr.hanghae.deploy.domain.Seat
+import kr.hanghae.deploy.repository.SeatRepository
 import org.springframework.stereotype.Component
 import java.lang.RuntimeException
 
@@ -10,7 +10,7 @@ class SeatReader(
     private val seatRepository: SeatRepository,
 ) {
 
-    fun readerByDate(date: String): List<Seat> {
+    fun getByDate(date: String): List<Seat> {
        return seatRepository.findAllByDate(date).also {
            if (it.isEmpty()) {
                throw RuntimeException("예약할 좌석이 존재하지 않습니다.")
@@ -18,8 +18,8 @@ class SeatReader(
        }
     }
 
-    fun readerByOrderAndDate(seatOrders: List<Long>, date: String): MutableList<Seat> {
-        return seatRepository.findByOrderAndDate(seatOrders, date).also {
+    fun getByOrderAndDate(seatNumbers: List<Int>, date: String): MutableList<Seat> {
+        return seatRepository.findByOrderAndDate(seatNumbers, date).also {
             if (it.isEmpty()) {
                 throw RuntimeException("예약할 좌석이 존재하지 않습니다.")
             }

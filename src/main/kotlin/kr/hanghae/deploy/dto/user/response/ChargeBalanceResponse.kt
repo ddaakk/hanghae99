@@ -1,6 +1,6 @@
 package kr.hanghae.deploy.dto.user.response
 
-import kr.hanghae.deploy.domain.user.User
+import kr.hanghae.deploy.domain.User
 
 data class ChargeBalanceResponse(
     val uuid: String,

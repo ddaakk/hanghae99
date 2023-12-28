@@ -4,7 +4,7 @@ import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.DescribeSpec
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
-import kr.hanghae.deploy.domain.bookabledate.BookableDate
+import kr.hanghae.deploy.domain.BookableDate
 import kr.hanghae.deploy.dto.ApiResponse
 import kr.hanghae.deploy.dto.bookabledate.response.BookableDateResponse
 import kr.hanghae.deploy.filter.AuthFilter
@@ -56,9 +56,9 @@ class BookableDateControllerTest(
                     jsonPath("\$.status") { value("OK") }
                     jsonPath("\$.message") { value("OK") }
                     jsonPath("\$.data[0].date") { value("2023-12-01") }
-                    jsonPath("\$.data[0].seatOrders") { isEmpty() }
+                    jsonPath("\$.data[0].seatNumbers") { isEmpty() }
                     jsonPath("\$.data[1].date") { value("2023-12-02") }
-                    jsonPath("\$.data[1].seatOrders") { isEmpty() }
+                    jsonPath("\$.data[1].seatNumbers") { isEmpty() }
                 }.andReturn()
             }
         }
