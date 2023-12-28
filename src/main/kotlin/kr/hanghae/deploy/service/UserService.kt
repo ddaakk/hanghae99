@@ -31,8 +31,9 @@ class UserService(
         val user = User()
 
         redisService.addQueue(user.uuid)
+        user.updateWaiting(redisService.getOrder(user.uuid).toInt())
 
-        return userManager.saveUser()
+        return userManager.saveUser(user)
     }
 
     @Transactional

@@ -10,7 +10,8 @@ import kr.hanghae.deploy.domain.BaseEntity
 class User(
     uuid: String = Generators.timeBasedGenerator().generate().toString(),
     balance: Long = 0L,
-    booking: MutableList<Booking> = mutableListOf()
+    booking: MutableList<Booking> = mutableListOf(),
+    waiting: Int = 1,
 ) : BaseEntity() {
 
 
@@ -22,6 +23,9 @@ class User(
 
     @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
     val booking: MutableList<Booking> = booking
+
+    var waiting: Int = waiting
+        protected set
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,5 +41,9 @@ class User(
         }
 
         this.balance -= balance
+    }
+
+    fun updateWaiting(waiting: Int) {
+        this.waiting = waiting
     }
 }

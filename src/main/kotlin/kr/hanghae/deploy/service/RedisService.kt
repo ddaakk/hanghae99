@@ -16,5 +16,7 @@ class RedisService(
         redisTemplate.opsForZSet().add("queue", uuid, now.toDouble());
     }
 
-
+    fun getOrder(uuid: String): Long {
+        return redisTemplate.opsForZSet().rank("queue", uuid) ?: 1L
+    }
 }

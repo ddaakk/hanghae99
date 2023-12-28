@@ -4,7 +4,7 @@ import kr.hanghae.deploy.domain.User
 
 data class GenerateTokenResponse(
     val uuid: String,
-    val waitingOrder: Int,
+    val waiting: Int,
     val remainTime: Int,
 ) {
 
@@ -12,16 +12,7 @@ data class GenerateTokenResponse(
         fun of(user: User): GenerateTokenResponse {
             return GenerateTokenResponse(
                 uuid = user.uuid,
-                waitingOrder = 0,
-                remainTime = 0,
-            )
-        }
-
-
-        fun from(uuid: String, waitingOrder: Int): GenerateTokenResponse {
-            return GenerateTokenResponse(
-                uuid = uuid,
-                waitingOrder = waitingOrder,
+                waiting = user.waiting,
                 remainTime = 0,
             )
         }

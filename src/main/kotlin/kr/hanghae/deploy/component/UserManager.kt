@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component
 class UserManager(
     private val userRepositoryImpl: UserRepositoryImpl,
 ) {
-    fun saveUser(): User {
-        return userRepositoryImpl.save(User())
+    fun saveUser(user: User): User {
+        return userRepositoryImpl.save(user)
     }
 }
