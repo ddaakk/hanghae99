@@ -15,7 +15,6 @@ enum class BookingStatus {
 @Table
 class Booking(
     user: User,
-    seats: MutableList<Seat> = mutableListOf(),
     bookableDate: BookableDate?,
     status: BookingStatus = BookingStatus.RESERVING,
     payment: Payment? = null,
@@ -31,9 +30,6 @@ class Booking(
     var user: User = user
         protected set
 
-    @OneToMany(mappedBy = "booking", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var seats: MutableList<Seat> = seats
-        protected set
 
     @OneToOne(fetch = FetchType.LAZY)
     var bookableDate: BookableDate? = bookableDate
