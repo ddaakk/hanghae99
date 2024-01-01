@@ -2,45 +2,45 @@ package kr.hanghae.deploy.domain
 
 import com.fasterxml.uuid.Generators
 import jakarta.persistence.*
+import java.math.BigDecimal
 import java.math.BigInteger
+import java.time.LocalDate
 
 
 enum class BookingStatus {
-    RESERVING,
-    RESERVED,
+    BOOKING,
+    BOOKED,
+    NOT_BOOKED,
     CANCELED,
 }
 
 @Entity
 @Table
 class Booking(
-    user: User,
-    bookableDate: BookableDate?,
-    status: BookingStatus = BookingStatus.RESERVING,
-    payment: Payment? = null,
+    userId: Long,
+    date: LocalDate,
+    seats: MutableList<Seat> = mutableListOf(),
+    status: BookingStatus = BookingStatus.BOOKING,
     number: String = String.format(
         "%040d",
         BigInteger(
             Generators.timeBasedGenerator().generate().toString().replace("-", ""), 16
         )
-    )
+    ),
 ) : BaseEntity() {
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    var user: User = user
+    var userId: Long = userId
         protected set
 
+    var date: LocalDate = date
+        protected set
 
-    @OneToOne(fetch = FetchType.LAZY)
-    var bookableDate: BookableDate? = bookableDate
+    @OneToMany(mappedBy = "booking")
+    var seats: MutableList<Seat> = seats
         protected set
 
     @Enumerated(EnumType.STRING)
     var status: BookingStatus = status
-        protected set
-
-    @OneToOne(mappedBy = "booking", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var payment: Payment? = payment
         protected set
 
     var number: String = number
@@ -50,12 +50,21 @@ class Booking(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    fun updatePayment(payment: Payment) {
-        this.payment = payment
-        this.status = BookingStatus.RESERVED
+    fun updateSeats(seats: MutableList<Seat>) {
+        this.seats = seats
+        seats.forEach { it.updateBooking(this) }
     }
 
-    fun getTotalPrice(): Long {
-        return seats.sumOf { it.price }
+    fun getTotalPrice(): BigDecimal {
+        return this.seats.sumOf { it.price }.toBigDecimal()
+    }
+
+    fun changeToBooked() {
+        this.status = BookingStatus.BOOKED
+    }
+
+    fun changeToBookable() {
+        this.status = BookingStatus.NOT_BOOKED
+        this.seats.forEach { it.updateBooking(null) }
     }
 }

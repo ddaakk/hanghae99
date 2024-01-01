@@ -1,6 +1,7 @@
 package kr.hanghae.deploy.dto.user.response
 
 import kr.hanghae.deploy.domain.User
+import kr.hanghae.deploy.dto.user.GenerateTokenServiceResponse
 
 data class GenerateTokenResponse(
     val uuid: String,
@@ -9,11 +10,12 @@ data class GenerateTokenResponse(
 ) {
 
     companion object {
-        fun of(user: User): GenerateTokenResponse {
+        fun of(response: GenerateTokenServiceResponse): GenerateTokenResponse {
+            val (uuid, waiting, remainTime) = response
             return GenerateTokenResponse(
-                uuid = user.uuid,
-                waiting = user.waiting,
-                remainTime = 0,
+                uuid = uuid,
+                waiting = waiting,
+                remainTime = remainTime,
             )
         }
     }

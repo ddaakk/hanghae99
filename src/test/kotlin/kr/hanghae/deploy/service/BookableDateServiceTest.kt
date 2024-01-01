@@ -6,35 +6,35 @@ import io.kotest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
-import kr.hanghae.deploy.component.BookableDateReader
+import kr.hanghae.deploy.component.ConcertReader
 import kr.hanghae.deploy.domain.BookableDate
-import kr.hanghae.deploy.dto.bookabledate.response.BookableDateResponse
+import kr.hanghae.deploy.domain.Concert
+import kr.hanghae.deploy.dto.bookabledate.BookableDateServiceRequest
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.LocalDate
 
 @ExtendWith(MockKExtension::class)
-class BookableDateServiceTest: DescribeSpec({
+internal class BookableDateServiceTest: DescribeSpec({
 
-    val bookableDateReader = mockk<BookableDateReader>()
-    val bookableDateService = BookableDateService(bookableDateReader)
+    val concertReader = mockk<ConcertReader>()
+    val bookableDateService = BookableDateService(concertReader)
 
     describe("getBookableDates") {
         context("예약 가능한 날들을 등록하고") {
 
-            val firstBookableDate = BookableDate(date = "2023-12-01")
-            val secondBookableDate = BookableDate(date = "2023-12-02")
-            val bookableDates = listOf(firstBookableDate, secondBookableDate)
+            val concert = Concert(name = "고척돔", number = "1234")
+            val firstBookableDate = BookableDate(concert = concert, date = LocalDate.now())
+            val secondBookableDate = BookableDate(concert = concert, date = LocalDate.now())
+            val bookableDates = mutableListOf(firstBookableDate, secondBookableDate)
+            concert.updateBookableDates(bookableDates)
 
-            every { bookableDateReader.reader() } returns bookableDates
-
-            val bookableDateResponses = listOf(
-                BookableDateResponse.of(bookableDate = firstBookableDate),
-                BookableDateResponse.of(bookableDate = secondBookableDate)
-            )
+            every { concertReader.getByConcertNumber(any()) } returns concert
 
             it("전체 예약 가능 일자들을 조회한다") {
-                val response = bookableDateService.getBookableDates()
+                val response = bookableDateService.getBookableDates(BookableDateServiceRequest("1234"))
                 response shouldHaveSize 2
-                response shouldBe bookableDateResponses
+                response[0].date shouldBe LocalDate.now()
+                response[1].date shouldBe LocalDate.now()
             }
         }
     }

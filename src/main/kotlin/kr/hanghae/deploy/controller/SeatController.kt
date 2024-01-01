@@ -7,8 +7,6 @@ import kr.hanghae.deploy.dto.seat.request.SeatRequest
 import kr.hanghae.deploy.dto.seat.response.SeatResponse
 import kr.hanghae.deploy.service.SeatService
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import java.util.stream.Collectors
 
@@ -17,14 +15,18 @@ class SeatController(
     private val seatService: SeatService,
 ) {
     @GetMapping("/api/v1/seat")
-    fun getSeatsByDate(
+    fun getSeatsByConcertAndDate(
         @QueryStringArgResolver request: SeatRequest,
     ): ApiResponse<List<SeatResponse>> {
         return ApiResponse.ok(
-            data = seatService.getSeatsByDate(request = SeatServiceRequest.toService(request.date))
-                .stream()
-                .map(SeatResponse::of)
-                .collect(Collectors.toList())
+            data = SeatResponse.of(
+                seatService.getSeatsByConcertAndDate(
+                    request = SeatServiceRequest.toService(
+                        request.concertNumber,
+                        request.date
+                    )
+                )
+            )
         )
     }
 }

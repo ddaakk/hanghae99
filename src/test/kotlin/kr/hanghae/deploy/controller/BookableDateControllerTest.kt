@@ -2,9 +2,11 @@ package kr.hanghae.deploy.controller
 
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.DescribeSpec
+import io.mockk.InternalPlatformDsl.toStr
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import kr.hanghae.deploy.domain.BookableDate
+import kr.hanghae.deploy.domain.Concert
 import kr.hanghae.deploy.dto.ApiResponse
 import kr.hanghae.deploy.dto.bookabledate.response.BookableDateResponse
 import kr.hanghae.deploy.filter.AuthFilter
@@ -19,46 +21,49 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.time.LocalDate
 
-@WebMvcTest(controllers = [BookableDateController::class],
+@WebMvcTest(
+    controllers = [BookableDateController::class],
     excludeFilters = [ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = [AuthFilter::class])]
 )
 @ExtendWith(MockKExtension::class)
-class BookableDateControllerTest(
+internal class BookableDateControllerTest(
     @Autowired private val mockMvc: MockMvc,
     @MockkBean private val bookableDateService: BookableDateService,
 ) : DescribeSpec({
 
     describe("getBookableDates") {
         context("예약 가능한 날들을 등록하고") {
-            val firstBookableDate = BookableDate(date = "2023-12-01")
-            val secondBookableDate = BookableDate(date = "2023-12-02")
+            val concert = Concert(name = "고척돔")
+            val firstBookableDate = BookableDate(concert = concert, date = LocalDate.now())
+            val secondBookableDate = BookableDate(concert = concert, date = LocalDate.now())
+            val bookableDates = listOf(firstBookableDate, secondBookableDate)
 
-            val bookableDates = listOf(
-                BookableDateResponse.of(bookableDate = firstBookableDate),
-                BookableDateResponse.of(bookableDate = secondBookableDate)
-            )
-            val response = ApiResponse.ok(data = bookableDates)
-
-            every { bookableDateService.getBookableDates() } returns bookableDates
+            every { bookableDateService.getBookableDates(any()) } returns bookableDates
 
             it("전체 예약 가능 일자들을 조회한다") {
 
-                val actions = mockMvc.get("/api/v1/bookabledate")
+                val actions = mockMvc.get("/api/v1/bookabledate?concertNumber=1234")
 
                 actions.andExpect {
                     status { MockMvcResultMatchers.status().isOk }
                     content { contentType(MediaType.APPLICATION_JSON) }
-                    content { response }
+                    content {
+                        ApiResponse.ok(
+                            data = listOf(
+                                BookableDateResponse.of(firstBookableDate),
+                                BookableDateResponse.of(secondBookableDate)
+                            )
+                        )
+                    }
                     print { MockMvcResultHandlers.print() }
                 }.andExpect {
                     jsonPath("\$.code") { value(200) }
                     jsonPath("\$.status") { value("OK") }
                     jsonPath("\$.message") { value("OK") }
-                    jsonPath("\$.data[0].date") { value("2023-12-01") }
-                    jsonPath("\$.data[0].seatNumbers") { isEmpty() }
-                    jsonPath("\$.data[1].date") { value("2023-12-02") }
-                    jsonPath("\$.data[1].seatNumbers") { isEmpty() }
+                    jsonPath("\$.data[0].date") { value(LocalDate.now().toStr()) }
+                    jsonPath("\$.data[1].date") { value(LocalDate.now().toStr()) }
                 }.andReturn()
             }
         }

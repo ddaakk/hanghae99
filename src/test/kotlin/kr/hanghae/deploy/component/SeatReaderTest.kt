@@ -19,68 +19,68 @@ class SeatReaderTest: DescribeSpec({
     val seatRepository = mockk<SeatRepository>()
     val seatReader = SeatReader(seatRepository)
 
-    describe("getByDate") {
-        context("예약 가능한 날에 해당하는") {
-            val bookableDate = BookableDate(date = "2023-12-01")
-            val concert = Concert(name = "고척돔")
-            val firstSeat = Seat(bookableDate = bookableDate, number = 1, concert = concert, grade = "A")
-            val secondSeat = Seat(bookableDate = bookableDate, number = 2, concert = concert, grade = "A")
+    describe("getByBookableDateId") {
+        context("예약 가능 날짜의 아이디에 해당하는") {
+            val firstSeat = Seat(bookableDateId = 1, number = 1, grade = "A")
+            val secondSeat = Seat(bookableDateId = 1, number = 2, grade = "B")
 
-            val seats = listOf(firstSeat, secondSeat)
-
-            every { seatRepository.findAllByDate("2023-12-01") } returns seats
+            every { seatRepository.findByBookableDateId(any()) } returns listOf(firstSeat, secondSeat)
 
             it("좌석들을 조회한다") {
-                val response = seatReader.getByDate("2023-12-01")
-                response shouldHaveSize 2
-                response shouldBe seats
+                val seats = seatReader.getByBookableDateId(bookableDateId = 1)
+                seats shouldHaveSize 2
+                seats[0].bookableDateId shouldBe 1
+                seats[0].number shouldBe 1
+                seats[0].grade shouldBe "A"
+                seats[1].bookableDateId shouldBe 1
+                seats[1].number shouldBe 2
+                seats[1].grade shouldBe "B"
             }
         }
     }
 
 
-    describe("getByDate 실패") {
-        context("예약 가능한 날에 해당하는") {
+    describe("getByBookableDateId 실패") {
+        context("예약 가능 날짜의 아이디에 해당하는 좌석들을 조회를 시도하지만") {
 
-            every { seatRepository.findAllByDate("2023-12-01") } returns listOf()
+            every { seatRepository.findByBookableDateId(any()) } returns listOf()
 
             it("좌석들이 존재하지 않는다") {
                 shouldThrow<RuntimeException> {
-                    seatReader.getByDate("2023-12-01")
+                    seatReader.getByBookableDateId(bookableDateId = 1)
                 }.message shouldBe "예약할 좌석이 존재하지 않습니다."
             }
         }
     }
 
-    describe("getByDateAndOrder") {
-        context("예약 가능 날짜 정보와 좌석 순번을 통해") {
-            val bookableDate = BookableDate(date = "2023-12-01")
-            val concert = Concert("고척돔")
-            val firstSeat = Seat(bookableDate = bookableDate, number = 1, concert = concert, grade = "A")
-            val secondSeat = Seat(bookableDate = bookableDate, number = 2, concert = concert, grade = "A")
+    describe("getByOrderAndDate") {
+        context("좌석 순번과 예약 가능 날짜 정보에") {
+            val firstSeat = Seat(bookableDateId = 1, number = 1, grade = "A")
+            val secondSeat = Seat(bookableDateId = 1, number = 2, grade = "B")
 
-            val seats = mutableListOf(firstSeat, secondSeat)
-
-            every { seatRepository.findByOrderAndDate(listOf(1, 2), "2023-12-01") } returns seats
+            every { seatRepository.findByOrderAndDate(any(), any()) } returns mutableListOf(firstSeat, secondSeat)
 
             it("해당하는 좌석들을 조회한다") {
-                val response = seatReader.getByOrderAndDate(seatNumbers = listOf(1, 2), date = "2023-12-01")
-                response shouldHaveSize 2
-                response shouldBe seats
+                val seats = seatReader.getByOrderAndDate(seatNumbers = listOf(1, 2), bookableDateId = 1)
+                seats shouldHaveSize 2
+                seats[0].bookableDateId shouldBe 1
                 seats[0].number shouldBe 1
+                seats[0].grade shouldBe "A"
+                seats[1].bookableDateId shouldBe 1
                 seats[1].number shouldBe 2
+                seats[1].grade shouldBe "B"
             }
         }
     }
 
-    describe("getByDateAndOrder 실패") {
-        context("예약 가능 날짜 정보와 좌석 순번이 주어지지만") {
+    describe("getByOrderAndDate 실패") {
+        context("좌석 순번과 예약 가능 날짜 정보를 통해 조회를 시도하지만") {
 
-            every { seatRepository.findByOrderAndDate(listOf(1, 2), "2023-12-01") } returns mutableListOf()
+            every { seatRepository.findByOrderAndDate(any(), any()) } returns mutableListOf()
 
             it("해당하는 좌석들이 없어 조회에 실패한다") {
                 shouldThrow<RuntimeException> {
-                    seatReader.getByOrderAndDate(seatNumbers = listOf(1, 2), date = "2023-12-01")
+                    seatReader.getByOrderAndDate(seatNumbers = listOf(1, 2), bookableDateId = 1)
                 }.message shouldBe "예약할 좌석이 존재하지 않습니다."
             }
         }

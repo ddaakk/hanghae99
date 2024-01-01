@@ -1,20 +1,22 @@
 package kr.hanghae.deploy.dto.booking.response
 
-import kr.hanghae.deploy.domain.Booking
+import kr.hanghae.deploy.dto.booking.BookingServiceResponse
+import java.time.LocalDate
 
 data class BookingResponse(
     val uuid: String,
-    val date: String?,
+    val date: LocalDate,
     val totalPrice: Long,
     val bookingNumber: String,
     val seatNumbers: List<Int>,
 ) {
 
     companion object {
-        fun of(booking: Booking): BookingResponse {
+        fun of(response: BookingServiceResponse): BookingResponse {
+            val (uuid, booking) = response
             return BookingResponse(
-                uuid = booking.user.uuid,
-                date = booking.bookableDate?.date,
+                uuid = uuid,
+                date = booking.date,
                 totalPrice = booking.seats.sumOf { it.price },
                 bookingNumber = booking.number,
                 seatNumbers = booking.seats.map { it.number }.toList()

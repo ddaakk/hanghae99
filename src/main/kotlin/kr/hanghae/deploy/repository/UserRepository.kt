@@ -6,4 +6,6 @@ interface UserRepository {
     fun findByUUID(uuid: String): User?
 
     fun existByUUID(uuid: String): Boolean
+
+    fun deleteByUUID(uuid: String)
 }

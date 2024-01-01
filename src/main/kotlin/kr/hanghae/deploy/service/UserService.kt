@@ -1,20 +1,15 @@
 package kr.hanghae.deploy.service
 
+import kr.hanghae.deploy.annotation.DistributedLock
 import kr.hanghae.deploy.component.UserManager
 import kr.hanghae.deploy.component.UserReader
-import kr.hanghae.deploy.repository.EmitterRepository
 import kr.hanghae.deploy.domain.User
-import kr.hanghae.deploy.repository.UserRepositoryImpl
-import kr.hanghae.deploy.dto.message.MessageDto
 import kr.hanghae.deploy.dto.user.ChargeBalanceServiceRequest
+import kr.hanghae.deploy.dto.user.GenerateTokenServiceResponse
 import kr.hanghae.deploy.dto.user.GetBalanceServiceRequest
-import kr.hanghae.deploy.dto.user.response.GenerateTokenResponse
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
-import java.io.IOException
-import java.util.*
 
 
 @Service
@@ -27,13 +22,21 @@ class UserService(
     val logger = KotlinLogging.logger {}
 
     @Transactional
-    fun generateToken(): User {
+    fun generateToken(): GenerateTokenServiceResponse {
+
+        val queueSize = redisService.getQueueSize()
+            ?: throw RuntimeException("대기열을 확인할 수 없습니다. 잠시 후 재시도 해주세요.")
+
+        if (queueSize > 100) {
+            throw RuntimeException("대기열이 가득찼습니다. 잠시 후 재시도 해주세요.")
+        }
+
         val user = User()
+        redisService.registerQueue(user.uuid)
+        val order = redisService.getQueueOrder(user.uuid)?.toInt() ?: 0
+        userManager.saveUser(user)
 
-        redisService.addQueue(user.uuid)
-        user.updateWaiting(redisService.getOrder(user.uuid).toInt())
-
-        return userManager.saveUser(user)
+        return GenerateTokenServiceResponse.from(uuid = user.uuid, waiting = order, remainTime = order * 100)
     }
 
     @Transactional

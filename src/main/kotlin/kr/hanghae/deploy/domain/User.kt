@@ -4,46 +4,43 @@ import com.fasterxml.uuid.Generators
 import jakarta.persistence.*
 import kr.hanghae.deploy.domain.Booking
 import kr.hanghae.deploy.domain.BaseEntity
+import java.math.BigDecimal
 
 @Entity
 @Table(name = "USERS")
 class User(
     uuid: String = Generators.timeBasedGenerator().generate().toString(),
-    balance: Long = 0L,
-    booking: MutableList<Booking> = mutableListOf(),
-    waiting: Int = 1,
+    balance: BigDecimal = BigDecimal(0),
+//    waiting: Int = 1,
 ) : BaseEntity() {
 
 
     var uuid: String = uuid
         protected set
 
-    var balance: Long = balance
+    var balance: BigDecimal = balance
         protected set
 
-    @OneToMany(mappedBy = "user", cascade = [CascadeType.ALL], orphanRemoval = true)
-    val booking: MutableList<Booking> = booking
-
-    var waiting: Int = waiting
-        protected set
+//    var waiting: Int = waiting
+//        protected set
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
 
-    fun chargeBalance(balance: Long) {
+    fun chargeBalance(balance: BigDecimal) {
         this.balance += balance
     }
 
-    fun payBookingSeats(totalPrice: Long) {
+    fun payBooking(totalPrice: BigDecimal) {
         if (totalPrice > balance) {
             throw RuntimeException("좌석을 구매할 잔액이 부족합니다.")
         }
 
-        this.balance -= balance
+        this.balance -= totalPrice
     }
 
-    fun updateWaiting(waiting: Int) {
-        this.waiting = waiting
-    }
+//    fun updateWaiting(waiting: Int) {
+//        this.waiting = waiting
+//    }
 }

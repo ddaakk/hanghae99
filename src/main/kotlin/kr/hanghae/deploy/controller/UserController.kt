@@ -8,14 +8,10 @@ import kr.hanghae.deploy.dto.user.response.ChargeBalanceResponse
 import kr.hanghae.deploy.dto.user.response.GenerateTokenResponse
 import kr.hanghae.deploy.dto.user.response.GetBalanceResponse
 import kr.hanghae.deploy.service.UserService
+import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter
 
 @RestController
@@ -23,14 +19,8 @@ class UserController(
     private val userService: UserService,
 ) {
 
-////    @PostMapping("/api/v1/user/token", produces = [MediaType.TEXT_EVENT_STREAM_VALUE])
-//    fun generateToken(
-////        @RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") lastEventId: String
-//    ): ResponseEntity<SseEmitter> {
-//        return ResponseEntity.ok(userService.generateToken(lastEventId))
-//    }
-
     @PostMapping("/api/v1/user/token")
+    @ResponseStatus(HttpStatus.CREATED)
     fun generateToken(): ApiResponse<GenerateTokenResponse> {
         return ApiResponse.created(data = GenerateTokenResponse.of(userService.generateToken()))
     }

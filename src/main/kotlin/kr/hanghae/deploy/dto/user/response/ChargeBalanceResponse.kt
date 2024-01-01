@@ -1,10 +1,11 @@
 package kr.hanghae.deploy.dto.user.response
 
 import kr.hanghae.deploy.domain.User
+import java.math.BigDecimal
 
 data class ChargeBalanceResponse(
     val uuid: String,
-    val balance: Long,
+    val balance: BigDecimal,
 ) {
 
     companion object {

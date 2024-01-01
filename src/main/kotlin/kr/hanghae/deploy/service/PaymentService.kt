@@ -2,32 +2,31 @@ package kr.hanghae.deploy.service
 
 import kr.hanghae.deploy.component.BookingReader
 import kr.hanghae.deploy.component.UserReader
-import kr.hanghae.deploy.domain.PayStatus
-import kr.hanghae.deploy.domain.Payment
+import kr.hanghae.deploy.domain.BookingStatus
 import kr.hanghae.deploy.dto.payment.PayBookingServiceRequest
-import kr.hanghae.deploy.repository.PaymentRepository
-import kr.hanghae.deploy.repository.PaymentRepositoryImpl
+import kr.hanghae.deploy.dto.payment.PayBookingServiceResponse
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PaymentService (
-    private val paymentRepositoryImpl: PaymentRepositoryImpl,
     private val userReader: UserReader,
     private val bookingReader: BookingReader,
 ){
     @Transactional
-    fun payBooking(request: PayBookingServiceRequest): Payment {
+    fun payBooking(request: PayBookingServiceRequest): PayBookingServiceResponse {
         val (bookingNumber, uuid) = request
 
         val user = userReader.getByUUID(uuid);
-        val booking = bookingReader.getByBookingNumber(bookingNumber, uuid)
+        val booking = bookingReader.getByBookingNumber(bookingNumber, userId = user.id ?: 0)
 
-        user.payBookingSeats(totalPrice = booking.getTotalPrice())
-        val payment = Payment(booking, status = PayStatus.PAY_COMPLETE)
-        val savedPayment = paymentRepositoryImpl.saveAndFlush(payment)
-        booking.updatePayment(savedPayment)
+        if (booking.status == BookingStatus.BOOKED) {
+            throw RuntimeException("이미 구매가 완료된 예약입니다.")
+        }
 
-        return savedPayment
+        user.payBooking(booking.getTotalPrice())
+        booking.changeToBooked()
+
+        return PayBookingServiceResponse.from(uuid, booking)
     }
 }

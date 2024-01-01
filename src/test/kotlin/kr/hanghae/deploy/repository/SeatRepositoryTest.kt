@@ -1,82 +1,70 @@
 package kr.hanghae.deploy.repository
 
+import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.style.DescribeSpec
-import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
-import io.kotest.matchers.collections.shouldHaveSize
+import io.kotest.core.test.TestCase
 import io.kotest.matchers.shouldBe
+import kr.hanghae.deploy.DatabaseCleanUpExecutor
 import kr.hanghae.deploy.domain.BookableDate
 import kr.hanghae.deploy.domain.Concert
 import kr.hanghae.deploy.domain.Seat
-import kr.hanghae.deploy.domain.User
-import kr.hanghae.deploy.repository.BookableDateRepositoryImpl
-import kr.hanghae.deploy.repository.UserRepositoryImpl
 import kr.hanghae.deploy.txContext
-import kr.hanghae.deploy.repository.SeatRepositoryImpl
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.jdbc.core.JdbcTemplate
+import java.time.LocalDate
 
 @DataJpaTest
-@Transactional
 internal class SeatRepositoryTest(
+    private val jdbcTemplate: JdbcTemplate,
     private val seatRepositoryImpl: SeatRepositoryImpl,
     private val bookableDateRepositoryImpl: BookableDateRepositoryImpl,
-    private val userRepositoryImpl: UserRepositoryImpl,
     private val concertRepositoryImpl: ConcertRepositoryImpl,
-) : DescribeSpec({
+) : DescribeSpec() {
 
-    describe("findAllByDate") {
-        txContext("예약 가능한 날짜 정보가 주어지면") {
+    override suspend fun beforeEach(testCase: TestCase) {
+        val concert = Concert(name = "고척돔")
+        concertRepositoryImpl.save(concert)
 
-            val concert = Concert("고척돔")
-            concertRepositoryImpl.saveAndFlush(concert)
+        val bookableDate = BookableDate(date = LocalDate.now(), concert = concert)
+        bookableDateRepositoryImpl.save(bookableDate)
+        val seats = mutableListOf(
+            Seat(bookableDateId = 1, number = 1, grade = "A"),
+            Seat(bookableDateId = 1, number = 2, grade = "A"),
+        )
+        seatRepositoryImpl.saveAll(seats)
+    }
 
-            val bookableDate = BookableDate(date = "2023-12-01")
-            val seats = mutableListOf(
-                Seat(bookableDate = bookableDate, number = 1, concert = concert, grade = "A"),
-                Seat(bookableDate = bookableDate, number = 2, concert = concert, grade = "A"),
-            )
-            bookableDate.updateSeats(seats = seats)
-            bookableDateRepositoryImpl.saveAndFlush(bookableDate)
-            seatRepositoryImpl.saveAllAndFlush(seats)
+    init {
+        describe("findByBookableDateId") {
+            txContext("예약 가능한 날짜 아이디가 주어지면") {
+                it("해당 날짜의 좌석들이 반환된다") {
+                    val seats = seatRepositoryImpl.findByBookableDateId(bookableDateId = 1)
+                    seats.size shouldBe 2
+                    seats[0].bookableDateId shouldBe 1
+                    seats[0].number shouldBe 1
+                    seats[0].grade shouldBe "A"
+                    seats[1].bookableDateId shouldBe 1
+                    seats[1].number shouldBe 2
+                    seats[1].grade shouldBe "A"
+                }
+            }
+        }
 
-            it("해당 날짜의 좌석 정보들을 반환한다") {
-                val seats = seatRepositoryImpl.findAllByDate(date = "2023-12-01")
-
-                seats shouldHaveSize 2
-                seats[0].bookableDate.date shouldBe "2023-12-01"
-                seats[1].bookableDate.date shouldBe "2023-12-01"
-                seats.map { it.number }.shouldContainExactlyInAnyOrder(listOf(1, 2))
+        describe("findByOrderAndDate") {
+            txContext("좌석 순서의 번호들과 예약 날짜 아이디가 주어지면") {
+                it("해당 날짜의 좌석들이 반환된다") {
+                    val seats = seatRepositoryImpl.findByOrderAndDate(seatNumbers = listOf(1, 2), bookableDateId = 1)
+                    seats.size shouldBe 2
+                    seats[0].bookableDateId shouldBe 1
+                    seats[0].number shouldBe 1
+                    seats[0].grade shouldBe "A"
+                    seats[1].bookableDateId shouldBe 1
+                    seats[1].number shouldBe 2
+                    seats[1].grade shouldBe "A"
+                }
             }
         }
     }
 
-    describe("findByOrderAndDate") {
-        txContext("예약을 원하는 예약 가능 날짜와 좌석 번호들이 주어지면") {
-
-            val user = User(uuid = "uuid")
-            userRepositoryImpl.saveAndFlush(user)
-
-            val concert = Concert("고척돔")
-            concertRepositoryImpl.saveAndFlush(concert)
-
-            val bookableDate = BookableDate(date = "2023-12-01")
-            val seats = mutableListOf(
-                Seat(bookableDate = bookableDate, number = 1, concert = concert, grade = "A"),
-                Seat(bookableDate = bookableDate, number = 2, concert = concert, grade = "A"),
-            )
-            bookableDate.updateSeats(seats = seats)
-            bookableDateRepositoryImpl.saveAndFlush(bookableDate)
-            seatRepositoryImpl.saveAllAndFlush(seats)
-
-            it("해당 날짜의 좌석 정보들을 반환한다") {
-                val seats = seatRepositoryImpl.findByOrderAndDate(seatNumbers = listOf(1, 2), date = "2023-12-01")
-                // verify
-                seats shouldHaveSize 2
-                seats[0].bookableDate.date shouldBe "2023-12-01"
-                seats[1].bookableDate.date shouldBe "2023-12-01"
-                seats.map { it.number }.shouldContainExactlyInAnyOrder(listOf(1, 2))
-            }
-        }
-    }
-
-})
+    override fun listeners(): List<TestListener> = listOf(DatabaseCleanUpExecutor(jdbcTemplate))
+}

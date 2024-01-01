@@ -1,24 +1,26 @@
 package kr.hanghae.deploy.dto.payment.response
 
-import kr.hanghae.deploy.domain.PayStatus
-import kr.hanghae.deploy.domain.Payment
+import kr.hanghae.deploy.domain.Booking
+import kr.hanghae.deploy.domain.BookingStatus
+import kr.hanghae.deploy.dto.payment.PayBookingServiceResponse
 
 data class PaymentResponse(
     val uuid: String,
     val bookingNumber: String,
     val seatNumbers: List<Int> = mutableListOf(),
     val totalPrice: Long,
-    val paymentStatus: PayStatus
-    ) {
+    val bookingStatus: BookingStatus,
+) {
 
     companion object {
-        fun of(payment: Payment): PaymentResponse {
+        fun from(response: PayBookingServiceResponse): PaymentResponse {
+            val (uuid, booking) = response
             return PaymentResponse(
-                uuid = payment.booking.user.uuid,
-                bookingNumber = payment.booking.number,
-                seatNumbers = payment.booking.seats.map { it.number }.toList(),
-                totalPrice = payment.booking.seats.sumOf { it.price },
-                paymentStatus = payment.status,
+                uuid = uuid,
+                bookingNumber = booking.number,
+                seatNumbers = booking.seats.map { it.number }.toList(),
+                totalPrice = booking.seats.sumOf { it.price },
+                bookingStatus = booking.status,
             )
         }
     }

@@ -1,26 +1,24 @@
 package kr.hanghae.deploy.domain
 
 import jakarta.persistence.*
+import java.time.LocalDate
 
 @Entity
 @Table
 class BookableDate(
-    seats: MutableList<Seat> = mutableListOf(),
-    date: String,
+    date: LocalDate,
+    concert: Concert,
 ) : BaseEntity() {
-    @OneToMany(mappedBy = "bookableDate", cascade = [CascadeType.ALL], orphanRemoval = true)
-    var seats: MutableList<Seat> = seats
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    var concert: Concert = concert
         protected set
 
-    @Column(nullable = false) // length 지정
-    var date: String = date
+    @Column(nullable = false)
+    var date: LocalDate = date
         protected set
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null
-
-    fun updateSeats(seats: MutableList<Seat>) {
-        this.seats = seats
-    }
 }

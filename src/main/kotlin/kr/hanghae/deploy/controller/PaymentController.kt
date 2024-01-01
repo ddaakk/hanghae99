@@ -5,11 +5,8 @@ import kr.hanghae.deploy.dto.payment.PayBookingServiceRequest
 import kr.hanghae.deploy.dto.payment.request.PaymentRequest
 import kr.hanghae.deploy.dto.payment.response.PaymentResponse
 import kr.hanghae.deploy.service.PaymentService
-import org.springframework.stereotype.Service
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestHeader
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
 
 @RestController
 class PaymentController(
@@ -17,12 +14,13 @@ class PaymentController(
 ) {
 
     @PostMapping("/api/v1/pay")
+    @ResponseStatus(HttpStatus.CREATED)
     fun payBooking(
         @RequestBody request: PaymentRequest,
         @RequestHeader("Authorization") uuid: String,
     ): ApiResponse<PaymentResponse> {
         return ApiResponse.created(
-            data = PaymentResponse.of(
+            data = PaymentResponse.from(
                 paymentService.payBooking(
                     PayBookingServiceRequest.toService(
                         bookingNumber = request.bookingNumber,

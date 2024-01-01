@@ -1,12 +1,16 @@
 package kr.hanghae.deploy.dto.seat
 
+import java.time.LocalDate
+
 data class SeatServiceRequest(
-    val date: String,
+    val concertNumber: String,
+    val date: LocalDate,
 ) {
     companion object {
-        fun toService(date: String): SeatServiceRequest {
+        fun toService(concertNumber: String, date: LocalDate): SeatServiceRequest {
             return SeatServiceRequest(
-                date = date
+                concertNumber = concertNumber,
+                date = date,
             )
         }
     }

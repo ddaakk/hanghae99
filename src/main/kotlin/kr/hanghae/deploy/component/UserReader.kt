@@ -14,8 +14,7 @@ class UserReader(
         return userRepository.findByUUID(uuid) ?: throw RuntimeException("사용자를 찾을 수 없습니다.")
     }
 
-    fun existByUUID(uuid: String): Boolean {
-        return userRepository.existByUUID(uuid);
+    fun findByUUID(uuid: String): User? {
+        return userRepository.findByUUID(uuid)
     }
-
 }

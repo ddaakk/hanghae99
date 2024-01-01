@@ -4,10 +4,10 @@ spring:
             on-profile: dev
 
     datasource:
-        url: 'jdbc:h2:mem:deploy'
-        #      url: 'jdbc:h2:tcp://localhost/~/testdb'
-        username: 'user'
-        password: ''
+        url: jdbc:h2:mem:deploy;MODE=MYSQL
+        #      url: jdbc:h2:tcp://localhost/~/testdb;MODE=MYSQL
+        username: user
+        password:
         driver-class-name: org.h2.Driver
     jpa:
         hibernate:
@@ -16,6 +16,9 @@ spring:
             hibernate:
                 format_sql: true
                 show_sql: true
+                default_batch_fetch_size: 1000
+                dialect: org.hibernate.dialect.MySQL57Dialect
+                dialect.storage_engine: innodb
         defer-datasource-initialization: true
 
     h2:

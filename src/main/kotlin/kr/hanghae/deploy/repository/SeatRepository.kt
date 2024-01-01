@@ -1,11 +1,9 @@
 package kr.hanghae.deploy.repository
 
 import kr.hanghae.deploy.domain.Seat
+import java.time.LocalDate
 
 interface SeatRepository {
-    fun findAllByDate(date: String): List<Seat>
-
-    fun findByOrderAndDate(seats: List<Int>, date: String): MutableList<Seat>
-
-//    fun findBookedSeat(time: LocalDateTime): List<Seat>
+    fun findByBookableDateId(bookableDateId: Long): List<Seat>
+    fun findByOrderAndDate(seatNumbers: List<Int>, bookableDateId: Long): List<Seat>
 }
