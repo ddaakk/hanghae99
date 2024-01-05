@@ -11,6 +11,7 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
+private val logger = KotlinLogging.logger {}
 
 @Service
 class UserService(
@@ -18,8 +19,6 @@ class UserService(
     private val userManager: UserManager,
     private val redisService: RedisService,
 ) {
-
-    val logger = KotlinLogging.logger {}
 
     @Transactional
     fun generateToken(): GenerateTokenServiceResponse {
@@ -44,6 +43,10 @@ class UserService(
         val (balance, uuid) = request
         val user = userReader.getByUUID(uuid)
         user.chargeBalance(balance)
+        logger.info {
+            "포인트 충전에 성공하였습니다. 잔액: $balance, " +
+                "사용자 아이디: $uuid"
+        }
         return user
     }
 

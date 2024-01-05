@@ -62,8 +62,8 @@ internal class BookableDateControllerTest(
                     jsonPath("\$.code") { value(200) }
                     jsonPath("\$.status") { value("OK") }
                     jsonPath("\$.message") { value("OK") }
-                    jsonPath("\$.data[0].date") { value(LocalDate.now().toStr()) }
-                    jsonPath("\$.data[1].date") { value(LocalDate.now().toStr()) }
+                    jsonPath("\$.data.sql[0].date") { value(LocalDate.now().toStr()) }
+                    jsonPath("\$.data.sql[1].date") { value(LocalDate.now().toStr()) }
                 }.andReturn()
             }
         }

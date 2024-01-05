@@ -1,7 +1,7 @@
     import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    id("org.springframework.boot") version "3.0.0"
+    id("org.springframework.boot") version "3.2.0"
     id("io.spring.dependency-management") version "1.1.4"
 //    id("org.jlleitschuh.gradle.ktlint") version "12.0.2"
     id("org.jetbrains.kotlin.plugin.jpa") version "1.6.21" // Entity에 기본 생성자 추가

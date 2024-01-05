@@ -2,6 +2,7 @@ package kr.hanghae.deploy.component
 
 import kr.hanghae.deploy.annotation.DistributedLock
 import kr.hanghae.deploy.util.CustomSpringELParser
+import mu.KotlinLogging
 import org.aspectj.lang.ProceedingJoinPoint
 import org.aspectj.lang.annotation.Around
 import org.aspectj.lang.annotation.Aspect
@@ -11,6 +12,8 @@ import org.redisson.api.RLock
 import org.redisson.api.RedissonClient
 import org.springframework.core.annotation.Order
 import java.util.concurrent.TimeUnit
+
+private val logger = KotlinLogging.logger {}
 
 @Aspect
 @Component
@@ -36,7 +39,8 @@ class DistributedLockAop(
                 joinPoint.args,
                 distributedLock.key
             )
-//        log.info("lock on [method:{}] [key:{}]", method, key)
+        logger.info("lock on [method:{}] [key:{}]", method, key)
+
 
         val rLock: RLock = redissonClient.getLock(key)
         val lockName = rLock.name
@@ -58,10 +62,10 @@ class DistributedLockAop(
         } finally {
             try {
                 rLock.unlock()
-//                log.info("unlock complete [Lock:{}] ", lockName)
+                logger.info("unlock complete [Lock:{}] ", lockName)
             } catch (e: IllegalMonitorStateException) {
                 // 락이 이미 종료되었을때 발생
-//                log.info("Redisson Lock Already Unlocked")
+                logger.info("Redisson Lock Already Unlocked")
             }
         }
     }

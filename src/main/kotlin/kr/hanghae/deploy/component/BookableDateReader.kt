@@ -2,6 +2,7 @@ package kr.hanghae.deploy.component
 
 import kr.hanghae.deploy.domain.BookableDate
 import kr.hanghae.deploy.repository.BookableDateRepository
+import mu.KotlinLogging
 import org.springframework.stereotype.Component
 import java.lang.RuntimeException
 import java.time.LocalDate

@@ -63,10 +63,10 @@ internal class ConcertControllerTest(
                     jsonPath("\$.code") { value(200) }
                     jsonPath("\$.status") { value("OK") }
                     jsonPath("\$.message") { value("OK") }
-                    jsonPath("\$.data[0].concertNumber") { value("1234") }
-                    jsonPath("\$.data[0].name") { value("고척돔") }
-                    jsonPath("\$.data[1].concertNumber") { value("5678") }
-                    jsonPath("\$.data[1].name") { value("아레나") }
+                    jsonPath("\$.data.sql[0].concertNumber") { value("1234") }
+                    jsonPath("\$.data.sql[0].name") { value("고척돔") }
+                    jsonPath("\$.data.sql[1].concertNumber") { value("5678") }
+                    jsonPath("\$.data.sql[1].name") { value("아레나") }
                 }.andReturn()
             }
         }

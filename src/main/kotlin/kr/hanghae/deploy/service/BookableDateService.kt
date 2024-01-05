@@ -5,8 +5,12 @@ import kr.hanghae.deploy.component.ConcertReader
 import kr.hanghae.deploy.domain.BookableDate
 import kr.hanghae.deploy.dto.bookabledate.BookableDateServiceRequest
 import kr.hanghae.deploy.dto.bookabledate.response.BookableDateResponse
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class BookableDateService(

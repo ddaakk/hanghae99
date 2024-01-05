@@ -5,8 +5,11 @@ import kr.hanghae.deploy.component.*
 import kr.hanghae.deploy.domain.Booking
 import kr.hanghae.deploy.dto.booking.BookingServiceRequest
 import kr.hanghae.deploy.dto.booking.BookingServiceResponse
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class BookingService(
@@ -29,6 +32,13 @@ class BookingService(
         seatsValidator.validate(seatNumbers, seats)
 
         val booking = bookingManager.requestBooking(user, seats, concert.bookableDates[0])
+
+        logger.info {
+            "좌석 예약에 성공하였습니다. 콘서트 번호: $concertNumber, " +
+                "날짜: $date, " +
+                "좌석 번호: $seatNumbers, " +
+                "사용자 아이디: $uuid"
+        }
 
         return BookingServiceResponse.from(uuid, booking)
     }

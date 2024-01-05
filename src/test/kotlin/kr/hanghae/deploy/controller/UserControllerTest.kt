@@ -69,9 +69,9 @@ internal class UserControllerTest(
                     jsonPath("\$.code") { value(201) }
                     jsonPath("\$.status") { value("CREATED") }
                     jsonPath("\$.message") { value("CREATED") }
-                    jsonPath("\$.data.uuid") { "uuid" }
-                    jsonPath("\$.data.waiting") { value(0) }
-                    jsonPath("\$.data.remainTime") { value(0) }
+                    jsonPath("\$.data.sql.uuid") { "uuid" }
+                    jsonPath("\$.data.sql.waiting") { value(0) }
+                    jsonPath("\$.data.sql.remainTime") { value(0) }
                 }.andReturn()
             }
         }
@@ -103,8 +103,8 @@ internal class UserControllerTest(
                     jsonPath("\$.code") { value(200) }
                     jsonPath("\$.status") { value("OK") }
                     jsonPath("\$.message") { value("OK") }
-                    jsonPath("\$.data.uuid") { "uuid" }
-                    jsonPath("\$.data.balance") { value(2000) }
+                    jsonPath("\$.data.sql.uuid") { "uuid" }
+                    jsonPath("\$.data.sql.balance") { value(2000) }
                 }.andReturn()
             }
         }
@@ -133,8 +133,8 @@ internal class UserControllerTest(
                     jsonPath("\$.code") { value(200) }
                     jsonPath("\$.status") { value("OK") }
                     jsonPath("\$.message") { value("OK") }
-                    jsonPath("\$.data.uuid") { "uuid" }
-                    jsonPath("\$.data.balance") { value(1000) }
+                    jsonPath("\$.data.sql.uuid") { "uuid" }
+                    jsonPath("\$.data.sql.balance") { value(1000) }
                 }.andReturn()
             }
         }
