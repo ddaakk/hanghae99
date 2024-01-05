@@ -87,14 +87,14 @@ internal class BookingControllerTest(
                     jsonPath("\$.code") { value(201) }
                     jsonPath("\$.status") { value("CREATED") }
                     jsonPath("\$.message") { value("CREATED") }
-                    jsonPath("\$.data.sql.uuid") { value("uuid") }
-                    jsonPath("\$.data.sql.date") { value(LocalDate.now().toStr()) }
-                    jsonPath("\$.data.sql.totalPrice") { value(6000) }
-                    jsonPath("\$.data.sql.bookingNumber") { value("1234") }
-                    jsonPath("\$.data.sql.seatNumbers") { isArray() }
-                    jsonPath("\$.data.sql.seatNumbers[0]") { value(1) }
-                    jsonPath("\$.data.sql.seatNumbers[1]") { value(2) }
-                    jsonPath("\$.data.sql.seatNumbers[2]") { value(3) }
+                    jsonPath("\$.data.uuid") { value("uuid") }
+                    jsonPath("\$.data.date") { value(LocalDate.now().toStr()) }
+                    jsonPath("\$.data.totalPrice") { value(6000) }
+                    jsonPath("\$.data.bookingNumber") { value("1234") }
+                    jsonPath("\$.data.seatNumbers") { isArray() }
+                    jsonPath("\$.data.seatNumbers[0]") { value(1) }
+                    jsonPath("\$.data.seatNumbers[1]") { value(2) }
+                    jsonPath("\$.data.seatNumbers[2]") { value(3) }
                 }.andReturn()
             }
         }

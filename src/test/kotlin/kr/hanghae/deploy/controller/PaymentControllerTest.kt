@@ -82,11 +82,11 @@ internal class PaymentControllerTest(
                     jsonPath("\$.code") { value(201) }
                     jsonPath("\$.status") { value("CREATED") }
                     jsonPath("\$.message") { value("CREATED") }
-                    jsonPath("\$.data.sql.uuid") { value("uuid") }
-                    jsonPath("\$.data.sql.bookingNumber") { value("1234") }
-                    jsonPath("\$.data.sql.seatNumbers") { listOf(1, 2, 3) }
-                    jsonPath("\$.data.sql.totalPrice") { value(6000) }
-                    jsonPath("\$.data.sql.bookingStatus") { value("BOOKED") }
+                    jsonPath("\$.data.uuid") { value("uuid") }
+                    jsonPath("\$.data.bookingNumber") { value("1234") }
+                    jsonPath("\$.data.seatNumbers") { listOf(1, 2, 3) }
+                    jsonPath("\$.data.totalPrice") { value(6000) }
+                    jsonPath("\$.data.bookingStatus") { value("BOOKED") }
                 }.andReturn()
             }
         }

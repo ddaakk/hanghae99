@@ -65,21 +65,21 @@ internal class SeatControllerTest(
                     jsonPath("\$.code") { value(200) }
                     jsonPath("\$.status") { value("OK") }
                     jsonPath("\$.message") { value("OK") }
-                    jsonPath("\$.data.sql[0].seatNumber") { value(1) }
-                    jsonPath("\$.data.sql[0].price") { value(0) }
-                    jsonPath("\$.data.sql[0].concertName") { value("고척돔") }
-                    jsonPath("\$.data.sql[0].bookingStatus") { value("NOT_BOOKED") }
-                    jsonPath("\$.data.sql[0].date") { LocalDate.now().toStr() }
-                    jsonPath("\$.data.sql[1].seatNumber") { value(2) }
-                    jsonPath("\$.data.sql[1].price") { value(0) }
-                    jsonPath("\$.data.sql[1].concertName") { value("고척돔") }
-                    jsonPath("\$.data.sql[1].bookingStatus") { value("NOT_BOOKED") }
-                    jsonPath("\$.data.sql[1].date") { LocalDate.now().toStr() }
-                    jsonPath("\$.data.sql[2].seatNumber") { value(3) }
-                    jsonPath("\$.data.sql[2].price") { value(0) }
-                    jsonPath("\$.data.sql[2].concertName") { value("고척돔") }
-                    jsonPath("\$.data.sql[2].bookingStatus") { value("NOT_BOOKED") }
-                    jsonPath("\$.data.sql[2].date") { LocalDate.now().toStr() }
+                    jsonPath("\$.data[0].seatNumber") { value(1) }
+                    jsonPath("\$.data[0].price") { value(0) }
+                    jsonPath("\$.data[0].concertName") { value("고척돔") }
+                    jsonPath("\$.data[0].bookingStatus") { value("NOT_BOOKED") }
+                    jsonPath("\$.data[0].date") { LocalDate.now().toStr() }
+                    jsonPath("\$.data[1].seatNumber") { value(2) }
+                    jsonPath("\$.data[1].price") { value(0) }
+                    jsonPath("\$.data[1].concertName") { value("고척돔") }
+                    jsonPath("\$.data[1].bookingStatus") { value("NOT_BOOKED") }
+                    jsonPath("\$.data[1].date") { LocalDate.now().toStr() }
+                    jsonPath("\$.data[2].seatNumber") { value(3) }
+                    jsonPath("\$.data[2].price") { value(0) }
+                    jsonPath("\$.data[2].concertName") { value("고척돔") }
+                    jsonPath("\$.data[2].bookingStatus") { value("NOT_BOOKED") }
+                    jsonPath("\$.data[2].date") { LocalDate.now().toStr() }
                 }.andReturn()
             }
         }
