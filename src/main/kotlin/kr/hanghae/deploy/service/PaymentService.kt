@@ -15,11 +15,19 @@ private val logger = KotlinLogging.logger {}
 class PaymentService (
     private val userReader: UserReader,
     private val bookingReader: BookingReader,
+    private val redisService: RedisService,
 ){
     @Transactional
     fun payBooking(request: PayBookingServiceRequest): PayBookingServiceResponse {
+
+        // TODO("동시에 여러 사용자가 예악할 수 있으므로 낙관적락 혹은 비관적락 사용")
+
         val (bookingNumber, uuid) = request
 
+        if (redisService.getValue(bookingNumber) == null) {
+            throw RuntimeException("존재하지 않는 예약 번호입니다.")
+        }
+        
         val user = userReader.getByUUID(uuid);
         val booking = bookingReader.getByBookingNumber(bookingNumber, userId = user.id ?: 0)
 
@@ -29,6 +37,7 @@ class PaymentService (
 
         user.payBooking(booking.getTotalPrice())
         booking.changeToBooked()
+        redisService.removeValue("booking${booking.number}")
 
         logger.info {
             "좌석 구매에 성공하였습니다. 예약 번호: $bookingNumber, " +

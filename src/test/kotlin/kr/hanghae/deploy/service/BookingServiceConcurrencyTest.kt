@@ -12,6 +12,7 @@ import kr.hanghae.deploy.dto.booking.BookingServiceRequest
 import kr.hanghae.deploy.repository.*
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.jdbc.core.JdbcTemplate
+import java.lang.RuntimeException
 import java.math.BigDecimal
 import java.time.LocalDate
 import java.util.concurrent.CountDownLatch
@@ -61,6 +62,7 @@ internal class BookingServiceConcurrencyTest(
                                     uuid = "uuid"
                                 )
                             )
+                        } catch (e: RuntimeException) {
                         } finally {
                             latch.countDown()
                         }

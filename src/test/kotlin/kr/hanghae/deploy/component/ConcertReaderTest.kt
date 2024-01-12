@@ -25,7 +25,7 @@ class ConcertReaderTest : DescribeSpec({
 
             every {
                 concertRepositoryImpl.findAll()
-            } returns listOf(Concert(name = "고척돔"), Concert(name = "아레나"))
+            } returns listOf(Concert(name = "고척돔", number = "1234"), Concert(name = "아레나", number = "5678"))
 
             it("콘서트 정보들을 반환한다") {
                 val concerts = concertReader.getAll()

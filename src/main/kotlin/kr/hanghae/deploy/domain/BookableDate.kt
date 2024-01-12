@@ -11,12 +11,10 @@ class BookableDate(
 ) : BaseEntity() {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    var concert: Concert = concert
-        protected set
+    val concert: Concert = concert
 
     @Column(nullable = false)
-    var date: LocalDate = date
-        protected set
+    val date: LocalDate = date
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

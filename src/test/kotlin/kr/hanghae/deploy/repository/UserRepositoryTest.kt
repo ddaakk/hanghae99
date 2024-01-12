@@ -37,6 +37,15 @@ internal class UserRepositoryTest(
             }
         }
 
+        describe("findByUUIDWithLock") {
+            txContext("사용자 UUID 정보가 주어지면") {
+                it("해당 사용자의 정보를 반환한다") {
+                    val user = userRepositoryImpl.findByUUIDWithLock("uuid")
+                    user?.uuid shouldBe "uuid"
+                }
+            }
+        }
+
         describe("existByUUID") {
             txContext("사용자 UUID 정보가 주어지면") {
                 it("해당 사용자가 존재하는지 확인한다") {

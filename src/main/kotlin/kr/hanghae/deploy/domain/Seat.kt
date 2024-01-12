@@ -17,17 +17,13 @@ class Seat(
     var booking: Booking? = booking
         protected set
 
-    var bookableDateId: Long = bookableDateId
-        protected set
+    val bookableDateId: Long = bookableDateId
 
-    var grade: String = grade
-        protected set
+    val grade: String = grade
 
-    var number: Int = number
-        protected set
+    val number: Int = number
 
-    var price: Long = price
-        protected set
+    val price: Long = price
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

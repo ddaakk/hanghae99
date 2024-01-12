@@ -22,7 +22,7 @@ internal class SeatRepositoryTest(
 ) : DescribeSpec() {
 
     override suspend fun beforeEach(testCase: TestCase) {
-        val concert = Concert(name = "고척돔")
+        val concert = Concert(name = "고척돔", number = "1234")
         concertRepositoryImpl.save(concert)
 
         val bookableDate = BookableDate(date = LocalDate.now(), concert = concert)

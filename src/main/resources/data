@@ -1,6 +1,6 @@
-INSERT INTO concert (name, number, created_at, updated_at)
-VALUES ('고척돔', '012345', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-       ('롤파크', '678910', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+INSERT INTO concert (name, number, status, created_at, updated_at)
+VALUES ('고척돔', '012345', 'AVAILABLE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+       ('롤파크', '678910', 'AVAILABLE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 
 INSERT INTO bookable_date (date, concert_id, created_at, updated_at)

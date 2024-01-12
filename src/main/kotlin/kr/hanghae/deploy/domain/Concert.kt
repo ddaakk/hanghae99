@@ -5,28 +5,30 @@ import jakarta.persistence.*
 import kr.hanghae.deploy.domain.BaseEntity
 import java.math.BigInteger
 
+enum class ConcertStatus {
+    AVAILABLE,
+    UNAVAILABLE,
+}
+
 @Entity
 @Table
 class Concert(
-    number: String = String.format(
-        "%040d",
-        BigInteger(
-            Generators.timeBasedGenerator().generate().toString().replace("-", ""), 16
-        )
-    ),
+    number: String,
     bookableDates: MutableList<BookableDate> = mutableListOf(),
     name: String,
+    status: ConcertStatus = ConcertStatus.AVAILABLE
 ) : BaseEntity() {
 
     @OneToMany(mappedBy = "concert", cascade = [CascadeType.ALL], orphanRemoval = true)
     var bookableDates: MutableList<BookableDate> = bookableDates
         protected set
 
-    var number: String = number
-        protected set
+    val number: String = number
 
-    var name: String = name
-        protected set
+    val name: String = name
+
+    @Enumerated(EnumType.STRING)
+    var status: ConcertStatus = status
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

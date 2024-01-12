@@ -19,8 +19,8 @@ internal class ConcertServiceTest : DescribeSpec({
         context("현재 예약 가능한") {
 
             every { concertReader.getAll() } returns listOf(
-                Concert(name = "고척돔"),
-                Concert(name = "아레나")
+                Concert(name = "고척돔", number = "1234"),
+                Concert(name = "아레나", number = "5678")
             )
 
             it("전체 콘서트 목록을 조회한다") {

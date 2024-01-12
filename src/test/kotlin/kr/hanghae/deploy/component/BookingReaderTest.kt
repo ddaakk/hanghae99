@@ -26,7 +26,7 @@ class BookingReaderTest: DescribeSpec({
 
             every {
                 bookingRepository.findByBookingNumber(any(), any())
-            } returns Booking(userId = 1, date = LocalDate.now())
+            } returns Booking(userId = 1, date = LocalDate.now(), number = "1234")
 
             it("해당 예약 정보를 반환한다") {
                 val booking = bookingReader.getByBookingNumber(bookingNumber = "1234", userId = 1)

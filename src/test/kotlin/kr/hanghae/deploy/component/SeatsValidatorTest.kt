@@ -33,7 +33,7 @@ class SeatsValidatorTest : DescribeSpec({
         context("이미 예약 중인 좌석이 포함된 경우") {
             it("좌석 검증에 실패한다") {
                 shouldThrow<RuntimeException> {
-                    val booking = Booking(userId = 1, date = LocalDate.now())
+                    val booking = Booking(userId = 1, date = LocalDate.now(), number = "1234")
                     seatsValidator.validate(
                         seatNumbers = listOf(1, 2), seats = mutableListOf(
                             Seat(bookableDateId = 1, number = 1, grade = "A", booking = booking),

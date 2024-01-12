@@ -25,7 +25,7 @@ class BookableDateReaderTest : DescribeSpec({
 
             every {
                 bookableDateRepository.findByDate(any())
-            } returns BookableDate(date = LocalDate.now(), concert = Concert(name = "고척돔"))
+            } returns BookableDate(date = LocalDate.now(), concert = Concert(name = "고척돔", number = "1234"))
 
             it("예약 가능 일자 정보를 조회한다") {
                 val bookableDate = bookableDateReader.getByDate(LocalDate.now())

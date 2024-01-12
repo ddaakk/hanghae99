@@ -35,7 +35,7 @@ internal class BookableDateControllerTest(
 
     describe("getBookableDates") {
         context("예약 가능한 날들을 등록하고") {
-            val concert = Concert(name = "고척돔")
+            val concert = Concert(name = "고척돔", number = "1234")
             val firstBookableDate = BookableDate(concert = concert, date = LocalDate.now())
             val secondBookableDate = BookableDate(concert = concert, date = LocalDate.now())
             val bookableDates = listOf(firstBookableDate, secondBookableDate)

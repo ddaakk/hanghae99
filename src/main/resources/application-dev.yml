@@ -4,10 +4,10 @@ spring:
             on-profile: dev
 
     datasource:
-        url: jdbc:h2:mem:deploy;MODE=MYSQL
-        #      url: jdbc:h2:tcp://localhost/~/testdb;MODE=MYSQL
-        username: user
-        password:
+        url: 'jdbc:h2:mem:deploy'
+        #      url: 'jdbc:h2:tcp://localhost/~/testdb'
+        username: 'user'
+        password: ''
         driver-class-name: org.h2.Driver
     jpa:
         hibernate:
@@ -16,33 +16,25 @@ spring:
             hibernate:
                 format_sql: true
                 show_sql: true
-                default_batch_fetch_size: 1000
-                dialect: org.hibernate.dialect.MySQL57Dialect
-                dialect.storage_engine: innodb
         defer-datasource-initialization: true
 
     h2:
         console:
             enabled: true
             path: '/h2-console'
-
-    rabbitmq:
-        host: localhost
-        port: 5672
-        username: guest
-        password: guest
-        listener:
-            direct:
-                prefetch: 1
-            simple:
-                prefetch: 1
-
-rabbitmq:
-    queue.name: rabbit.queue
-    exchange.name: rabbit.exchange
-    routing.key: rabbit.key
+    data:
+        redis:
+            port: 6379
+            host: 127.0.0.1
+            password: kang199801!
 
 management:
     endpoint:
         health:
             show-details: always
+
+cloud:
+    aws:
+        credentials:
+            accessKey:
+

@@ -21,19 +21,12 @@ class Booking(
     date: LocalDate,
     seats: MutableList<Seat> = mutableListOf(),
     status: BookingStatus = BookingStatus.BOOKING,
-    number: String = String.format(
-        "%040d",
-        BigInteger(
-            Generators.timeBasedGenerator().generate().toString().replace("-", ""), 16
-        )
-    ),
+    number: String,
 ) : BaseEntity() {
 
-    var userId: Long = userId
-        protected set
+    val userId: Long = userId
 
-    var date: LocalDate = date
-        protected set
+    val date: LocalDate = date
 
     @OneToMany(mappedBy = "booking")
     var seats: MutableList<Seat> = seats
@@ -43,8 +36,7 @@ class Booking(
     var status: BookingStatus = status
         protected set
 
-    var number: String = number
-        protected set
+    val number: String = number
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

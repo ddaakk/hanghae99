@@ -27,11 +27,13 @@ class BookingManagerTest : DescribeSpec({
 
             every {
                 bookingRepositoryImpl.save(any())
-            } returns Booking(userId = 1, date = LocalDate.now(), seats = seats)
+            } returns Booking(userId = 1, date = LocalDate.now(), seats = seats, number = "1234")
 
             it("콘서트 정보들을 반환한다") {
                 val booking = bookingManager.requestBooking(
-                    user = User(), seats = seats, BookableDate(date = LocalDate.now(), Concert(name = "고척돔"))
+                    user = User(uuid = "uuid"),
+                    seats = seats,
+                    BookableDate(date = LocalDate.now(), Concert(name = "고척돔", number = "5678"))
                 )
 
                 booking.userId shouldBe 1

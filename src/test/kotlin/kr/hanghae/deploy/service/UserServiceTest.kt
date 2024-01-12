@@ -12,8 +12,10 @@ import kr.hanghae.deploy.component.UserReader
 import kr.hanghae.deploy.domain.User
 import kr.hanghae.deploy.dto.user.ChargeBalanceServiceRequest
 import kr.hanghae.deploy.dto.user.GetBalanceServiceRequest
+import kr.hanghae.deploy.repository.UserRepositoryImpl
 import org.junit.jupiter.api.extension.ExtendWith
 import java.math.BigDecimal
+import java.time.Duration
 
 @ExtendWith(MockKExtension::class)
 internal class UserServiceTest : DescribeSpec({
@@ -21,40 +23,39 @@ internal class UserServiceTest : DescribeSpec({
     val userReader = mockk<UserReader>()
     val userManager = mockk<UserManager>()
     val redisService = mockk<RedisService>()
-    val userService = UserService(userReader, userManager, redisService)
+    val userRepositoryImpl = mockk<UserRepositoryImpl>()
+    val userService = UserService(userReader, userManager, redisService, userRepositoryImpl)
 
-    describe("generateToken 대기열 조회 실패") {
-        context("대기열 사이즈를 가져올 수 없어서") {
+    describe("generateToken 완료 추가 성공") {
+        context("대기열 완료에 100명이 넘지 않아서 완료에 새로운 사용자를 추가하고") {
 
-            every { redisService.getQueueSize() } returns null
+            every { redisService.getHashSize(any()) } returns 100
+            every { redisService.addHash(any(), any()) } just runs
+            every { redisService.setExpire(any(), any()) } just runs
+            every { redisService.expireTime } returns Duration.ZERO
+            every { userManager.saveUser(any()) } returns User(uuid = "uuid")
 
-            it("새로운 토큰 생성에 실패한다") {
-                shouldThrow<RuntimeException> {
-                    userService.generateToken()
-                }.message shouldBe "대기열을 확인할 수 없습니다. 잠시 후 재시도 해주세요."
+            mockkStatic(Generators::class)
+            val timeBasedGeneratorMock = mockk<TimeBasedGenerator>()
+            every { Generators.timeBasedGenerator() } returns timeBasedGeneratorMock
+            every { timeBasedGeneratorMock.generate().toString() } returns "uuid"
+
+            it("UUID 토큰을 반환한다") {
+                val user = userService.generateToken()
+                user.uuid shouldBe "uuid"
+                user.waiting shouldBe 0
+                user.remainTime shouldBe 0
             }
         }
     }
 
-    describe("generateToken 대기열 사이즈 초과 실패") {
-        context("대기열이 가득차서") {
 
-            every { redisService.getQueueSize() } returns 101
+    describe("generateToken 대기열 추가 성공") {
+        context("대기열 완료에 100명이 넘어서 대기열에 새로운 사용자를 추가하고") {
 
-            it("새로운 토큰 생성에 실패한다") {
-                shouldThrow<RuntimeException> {
-                    userService.generateToken()
-                }.message shouldBe "대기열이 가득찼습니다. 잠시 후 재시도 해주세요."
-            }
-        }
-    }
-
-    describe("generateToken") {
-        context("새로운 유저를 생성하고") {
-
-            every { redisService.getQueueSize() } returns 0
-            every { redisService.registerQueue(any()) } just runs
-            every { redisService.getQueueOrder(any()) } returns 0
+            every { redisService.getZSetSize(any()) } returns 101
+            every { redisService.addZSetIfAbsent(any(), any()) } just runs
+            every { redisService.getZSetRank(any(), any()) } returns 0
             every { userManager.saveUser(any()) } returns User(uuid = "uuid")
 
             mockkStatic(Generators::class)
@@ -76,7 +77,8 @@ internal class UserServiceTest : DescribeSpec({
 
             val user = User(uuid = "uuid")
 
-            every { userReader.getByUUID(any()) } returns user
+            every { userReader.getByUUIDWithLock(any()) } returns user
+            every { userRepositoryImpl.saveAndFlush(any()) } returns user
 
             it("사용자 잔액을 충전한다") {
                 val user = userService.chargeBalance(

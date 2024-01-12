@@ -45,6 +45,11 @@ dependencies {
     implementation("com.fasterxml.uuid:java-uuid-generator:4.3.0")
     implementation("org.redisson:redisson-spring-boot-starter:3.25.2")
 
+    // 로그백 의존성
+    implementation(group = "ca.pjer", name = "logback-awslogs-appender", version = "1.6.0")
+    // 프로퍼티 제어 in xml
+    implementation("org.codehaus.janino:janino:3.1.7")
+
     runtimeOnly("com.h2database:h2")
 
     compileOnly("org.projectlombok:lombok")

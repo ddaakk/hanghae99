@@ -18,7 +18,7 @@ data class BookingServiceRequest(
             return BookingServiceRequest(
                 concertNumber = concertNumber,
                 date = date,
-                seatNumbers = seatNumbers,
+                seatNumbers = seatNumbers.sorted(),
                 uuid = uuid,
             )
         }

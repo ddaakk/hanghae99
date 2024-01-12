@@ -42,6 +42,32 @@ class UserReaderTest: DescribeSpec({
         }
     }
 
+    describe("getByUUIDWithLock") {
+        context("사용자 UUID 정보가 주어지면") {
+            val user = User(uuid = "uuid")
+
+            every { userRepository.findByUUID(any()) } returns user
+
+            it("해당 사용자의 정보를 반환한다") {
+                val user = userReader.getByUUID(uuid = "uuid")
+                user.uuid shouldBe "uuid"
+            }
+        }
+    }
+
+    describe("getByUUIDWithLock 실패") {
+        context("존재하지 않는 사용자의 UUID가 주어지면") {
+
+            every { userRepository.findByUUID(any()) } returns null
+
+            it("해당 사용자의 정보를 반환에 실패한다") {
+                shouldThrow<RuntimeException> {
+                    userReader.getByUUID(uuid = "invalid-uuid")
+                }.message shouldBe "사용자를 찾을 수 없습니다."
+            }
+        }
+    }
+
     describe("findByUUID") {
         context("사용자 UUID 정보가 주어지면") {
             val user = User(uuid = "uuid")

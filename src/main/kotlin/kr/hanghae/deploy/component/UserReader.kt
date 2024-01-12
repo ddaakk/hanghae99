@@ -14,6 +14,10 @@ class UserReader(
         return userRepository.findByUUID(uuid) ?: throw RuntimeException("사용자를 찾을 수 없습니다.")
     }
 
+    fun getByUUIDWithLock(uuid: String): User {
+        return userRepository.findByUUIDWithLock(uuid) ?: throw RuntimeException("사용자를 찾을 수 없습니다.")
+    }
+
     fun findByUUID(uuid: String): User? {
         return userRepository.findByUUID(uuid)
     }

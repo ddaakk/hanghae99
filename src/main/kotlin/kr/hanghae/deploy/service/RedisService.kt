@@ -1,40 +1,77 @@
 package kr.hanghae.deploy.service
 
 import kr.hanghae.deploy.repository.RedisRepository
+import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.stereotype.Service
+import java.time.Duration
 import java.util.*
 
+enum class Key {
+    WAITING,
+    COMPLETE,
+    LOCK
+}
 
 @Service
 class RedisService(
     private val redisRepository: RedisRepository,
 ) {
 
-    fun registerQueue(value: Any) { // return Boolean
-       redisRepository.zAddIfAbsent(value, score = System.currentTimeMillis().toDouble())
+    val expireTime: Duration = Duration.ofMinutes(1)
+
+    fun addValue(key: String, value: String) {
+        redisRepository.addValue(key, value)
     }
 
-    fun getQueueSize(): Long? {
-        return redisRepository.zSize()
+    fun setExpire(key: String, time: Duration) {
+        redisRepository.setExpire(key, time)
     }
 
-    fun <T : Any> popQueue(count: Long, type: Class<T>): Queue<T> {
-        return LinkedList(redisRepository.zPopMin(count, type) ?: emptySet())
+    fun getValue(key: String): String {
+        return redisRepository.getValue(key)
     }
 
-    fun getQueueOrder(value: Any): Long? {
-        return redisRepository.zRank(value)
+    fun removeValue(key: String) {
+        redisRepository.removeValue(key)
     }
 
-    fun addComplete(key: String) {
-        redisRepository.hAdd(key)
+    fun addZSetIfAbsent(key: String, value: String) {
+       redisRepository.addZSetIfAbsent(key, value, score = System.currentTimeMillis().toDouble())
     }
 
-    fun getComplete(key: String): String? {
-        return redisRepository.hGet(key)
+    fun getZSetSize(key: String): Long? {
+        return redisRepository.getZSetSize(key)
     }
 
-    fun removeComplete(key: String) {
-        redisRepository.hSize(key)
+    fun <T : Any> popZSetMin(key: String, count: Long, type: Class<T>): Queue<T> {
+        return LinkedList(redisRepository.popZSetMin(key, count, type) ?: emptySet())
+    }
+
+    fun getZSetRank(key: String, value: Any): Long? {
+        return redisRepository.getZSetRank(key, value)
+    }
+
+    fun getZSetRangeByScore(key: String, min: Double, max: Double): Set<String> {
+        return redisRepository.getZSetRangeByScore(key, min, max)
+    }
+
+    fun addHash(key: String, hashKey: String) {
+        redisRepository.addHash(key, hashKey)
+    }
+
+    fun getHash(key: String, hashKey: String): String? {
+        return redisRepository.getHash(key, hashKey)
+    }
+
+    fun deleteHash(key: String, hashKey: String) {
+        redisRepository.deleteHash(key, hashKey)
+    }
+
+    fun getHashSize(key: String): Long {
+        return redisRepository.getHashSize(key)
+    }
+
+    fun flushAll() {
+        redisRepository.flushAll()
     }
 }

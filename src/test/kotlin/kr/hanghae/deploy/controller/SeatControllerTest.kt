@@ -37,7 +37,7 @@ internal class SeatControllerTest(
 
     describe("getSeatsByDate") {
         context("예약 가능한 날에 해당하는") {
-            val concert = Concert(name = "고척돔")
+            val concert = Concert(name = "고척돔", number = "1234")
             val bookableDate = BookableDate(concert = concert, date = LocalDate.now())
             val firstSeat = Seat(bookableDateId = 1, number = 1, grade = "A")
             val secondSeat = Seat(bookableDateId = 1, number = 2, grade = "A")
