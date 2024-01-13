@@ -29,9 +29,8 @@ internal class UserServiceTest : DescribeSpec({
     describe("generateToken 완료 추가 성공") {
         context("대기열 완료에 100명이 넘지 않아서 완료에 새로운 사용자를 추가하고") {
 
-            every { redisService.getHashSize(any()) } returns 100
-            every { redisService.addHash(any(), any()) } just runs
-            every { redisService.setExpire(any(), any()) } just runs
+            every { redisService.getZSetSize(any()) } returns 100
+            every { redisService.addZSetIfAbsent(any(), any()) } just runs
             every { redisService.expireTime } returns Duration.ZERO
             every { userManager.saveUser(any()) } returns User(uuid = "uuid")
 

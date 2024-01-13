@@ -70,8 +70,7 @@ internal class UserServiceConcurrencyTest(
         val chain = mockk<FilterChain>()
         val objectMapper = mockk<ObjectMapper>()
         val userReader = mockk<UserReader>()
-        val queuePublisher = mockk<ApplicationEventPublisher>()
-        val authFilter = AuthFilter(objectMapper, userReader, redisService, queuePublisher)
+        val authFilter = AuthFilter(objectMapper, userReader, redisService)
 
         describe("generateToken") {
 
@@ -82,6 +81,7 @@ internal class UserServiceConcurrencyTest(
             every { response.status = any() } just runs
             every { response.contentType = any() } just runs
             every { response.writer } returns mock(PrintWriter::class.java)
+            every { chain.doFilter(any(), any()) } just runs
 
             context("대기열 제한은 100명이지만 200명이 시도하여") {
 

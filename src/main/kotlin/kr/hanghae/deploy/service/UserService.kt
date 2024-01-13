@@ -27,30 +27,26 @@ class UserService(
     @Transactional
     fun generateToken(): GenerateTokenServiceResponse {
 
-        val completeSize = redisService.getHashSize(Key.COMPLETE.toString())
-
-        // TODO("UUID를 외부에서 사용할 수 있게 주입 받는 식으로 변경")
+        val completeSize = redisService.getZSetSize(Key.COMPLETE.toString()) ?: 0
 
         val uuid = Generators.timeBasedGenerator().generate().toString()
         val user = User(uuid)
         var order = 0
 
         if (completeSize > 100) {
-            redisService.addZSetIfAbsent(Key.WAITING.toString(), user.uuid)
-            order = redisService.getZSetRank(Key.WAITING.toString(), user.uuid)?.toInt() ?: 0
+            redisService.addZSet(Key.WAITING.toString(), "waiting${user.uuid}")
+            order = redisService.getZSetRank(Key.WAITING.toString(), "waiting${user.uuid}")?.toInt() ?: 0
 
             logger.info {
                 "새로운 사용자가 등록하였습니다. 완료 대기열이 가득차서 대기열에 등록합니다. UUID: ${user.uuid}, " +
-                    "대기 순서: $order, 남은 시간: ${order * redisService.expireTime.toMinutes()}m"
+                    "대기 순서: $order, 남은 시간: 최대 ${order * redisService.expireTime.toMinutes()}분"
             }
-
         } else {
-            redisService.addHash(Key.COMPLETE.toString(), "complete$uuid")
-//            redisService.setExpire("complete$uuid", redisService.expireTime)
+            redisService.addZSetIfAbsent(Key.COMPLETE.toString(), "complete$uuid")
 
             logger.info {
                 "새로운 사용자가 등록되었습니다. 완료 대기열에 등록합니다. UUID: ${user.uuid}, " +
-                    "대기 순서: $order, 남은 시간: ${order * redisService.expireTime.toMinutes()}m"
+                    "대기 순서: $order, 남은 시간: 최대 ${order * redisService.expireTime.toMinutes()}분"
             }
         }
 

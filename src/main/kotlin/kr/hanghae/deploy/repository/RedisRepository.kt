@@ -1,14 +1,12 @@
 package kr.hanghae.deploy.repository
 
-import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.core.StringRedisTemplate
-import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.stereotype.Repository
 import java.time.Duration
 
 @Repository
 class RedisRepository(
-    private val redisTemplate: RedisTemplate<String, String>,
+    private val redisTemplate: StringRedisTemplate,
 ) {
 
     fun addValue(key: String, value: String) {
@@ -27,27 +25,37 @@ class RedisRepository(
         redisTemplate.delete(key)
     }
 
-    fun addZSetIfAbsent(zOpsKey: String, value: String, score: Double): Boolean? {
-        return redisTemplate.opsForZSet().addIfAbsent(zOpsKey, value, score)
+    fun addZSet(key: String, value: String, score: Double): Boolean? {
+        return redisTemplate.opsForZSet().add(key, value, score)
     }
 
-    fun <T : Any> popZSetMin(zOpsKey: String, count: Long, type: Class<T>): Set<T>? {
-        return redisTemplate.opsForZSet().popMin(zOpsKey, count)
+    fun addZSetIfAbsent(key: String, value: String, score: Double): Boolean? {
+        return redisTemplate.opsForZSet().addIfAbsent(key, value, score)
+    }
+
+    fun <T : Any> popZSetMin(key: String, count: Long, type: Class<T>): Set<T>? {
+        return redisTemplate.opsForZSet().popMin(key, count)
             ?.map { type.cast(it.value) }
             ?.toSet()
     }
 
-    fun getZSetRank(zOpsKey: String, value: Any): Long? {
-        return redisTemplate.opsForZSet().rank(zOpsKey, value)
+    fun getZSetRank(key: String, value: Any): Long? {
+        return redisTemplate.opsForZSet().rank(key, value)
     }
 
-    fun getZSetSize(zOpsKey: String): Long? {
-        return redisTemplate.opsForZSet().size(zOpsKey)
+    fun getZSetSize(key: String): Long? {
+        return redisTemplate.opsForZSet().size(key)
     }
 
     fun getZSetRangeByScore(key: String, min: Double, max: Double): Set<String> {
         return redisTemplate.opsForZSet().rangeByScore(key, min, max) ?: emptySet()
     }
+
+    fun deleteAllZSet(key: String, hashKeys: Array<String>) {
+        redisTemplate.opsForZSet().remove(key, *hashKeys)
+    }
+
+    fun getZSet(key: String, member: String): Boolean = redisTemplate.opsForZSet().rank(key, member) != null
 
     fun addHash(key: String, hashKey: String) {
         redisTemplate.opsForHash<String, String>().put(key, hashKey, "complete")

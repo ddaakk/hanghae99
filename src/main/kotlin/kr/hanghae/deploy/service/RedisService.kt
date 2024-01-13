@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 enum class Key {
     WAITING,
@@ -35,8 +36,20 @@ class RedisService(
         redisRepository.removeValue(key)
     }
 
+    fun addZSet(key: String, value: String): Boolean? {
+        return redisRepository.addZSet(
+            key,
+            value,
+            score = System.currentTimeMillis().toDouble()
+        )
+    }
+
     fun addZSetIfAbsent(key: String, value: String) {
-       redisRepository.addZSetIfAbsent(key, value, score = System.currentTimeMillis().toDouble())
+        redisRepository.addZSetIfAbsent(
+            key,
+            value,
+            score = System.currentTimeMillis().toDouble()
+        )
     }
 
     fun getZSetSize(key: String): Long? {
@@ -53,6 +66,14 @@ class RedisService(
 
     fun getZSetRangeByScore(key: String, min: Double, max: Double): Set<String> {
         return redisRepository.getZSetRangeByScore(key, min, max)
+    }
+
+    fun getZSet(key: String, member: String): Boolean {
+        return redisRepository.getZSet(key, member)
+    }
+
+    fun deleteAllZSet(key: String, hashKeys: Array<String>) {
+        redisRepository.deleteAllZSet(key, hashKeys)
     }
 
     fun addHash(key: String, hashKey: String) {

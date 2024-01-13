@@ -2,6 +2,9 @@
 <configuration>
     <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.accessKey"/>
     <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secretKey"/>
+    <springProperty name="Log_Group_Name:local" source="log.group.name"/>
+    <springProperty name="Log_Group_Name:dev" source="log.group.name"/>
+    <springProperty name="Log_Group_Name:prod" source="log.group.name"/>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -33,10 +36,10 @@
                 <logGroupName>${Log_Group_Name:prod}</logGroupName>
             </then>
         </if>
-        <logStreamUuidPrefix>error-</logStreamUuidPrefix>
+        <logStreamUuidPrefix>hanghae-</logStreamUuidPrefix>
         <logRegion>ap-northeast-2</logRegion>
         <maxBatchLogEvents>50</maxBatchLogEvents>
-        <maxFlushTimeMillis>30000</maxFlushTimeMillis>
+        <maxFlushTimeMillis>10000</maxFlushTimeMillis>
         <maxBlockTimeMillis>5000</maxBlockTimeMillis>
         <retentionTimeDays>0</retentionTimeDays>
         <accessKeyId>${AWS_ACCESS_KEY}</accessKeyId>
@@ -45,15 +48,17 @@
 
     <springProfile name="local">
         <root level="info">
-            <appender-ref ref="STDOUT" />
+            <appender-ref ref="STDOUT"/>
         </root>
     </springProfile>
 
     <springProfile name="dev">
-        <logger name="org.springframework" level="INFO" />
+        <logger name="org.springframework" level="INFO"/>
         <root level="INFO">
-            <appender-ref ref="ASYNC_AWS_LOGS" />
+            <appender-ref ref="STDOUT"/>
+            <appender-ref ref="ASYNC_AWS_LOGS"/>
         </root>
     </springProfile>
+
 
 </configuration>

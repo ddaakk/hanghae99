@@ -14,7 +14,8 @@ class FilterConfig(
     fun authFilterRegistrationBean(): FilterRegistrationBean<AuthFilter> {
         val registrationBean = FilterRegistrationBean(authFilter)
         registrationBean.order = 0
-        registrationBean.urlPatterns = mutableListOf("/api/v1/seat", "/api/v1/user/charge", "/api/v1/pay")
+        registrationBean.urlPatterns =
+            mutableListOf("/api/v1/user/charge", "/api/v1/pay", "/api/v1/book")
         return registrationBean
     }
 }

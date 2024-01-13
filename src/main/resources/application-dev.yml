@@ -36,5 +36,10 @@ management:
 cloud:
     aws:
         credentials:
-            accessKey:
+            accessKey: AKIAUWVNTVFA2XYPFBET
+            secretKey: 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
+
+log:
+    group:
+        name: hhplus-kotlin-prod-logs
 
