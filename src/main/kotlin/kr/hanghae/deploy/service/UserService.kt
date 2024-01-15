@@ -13,6 +13,7 @@ import org.springframework.orm.ObjectOptimisticLockingFailureException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 private val logger = KotlinLogging.logger {}
 
@@ -27,37 +28,26 @@ class UserService(
     @Transactional
     fun generateToken(): GenerateTokenServiceResponse {
 
-        val completeSize = redisService.getZSetSize(Key.COMPLETE.toString()) ?: 0
-
         val uuid = Generators.timeBasedGenerator().generate().toString()
         val user = User(uuid)
-        var order = 0
 
-        if (completeSize > 100) {
-            redisService.addZSet(Key.WAITING.toString(), "waiting${user.uuid}")
-            order = redisService.getZSetRank(Key.WAITING.toString(), "waiting${user.uuid}")?.toInt() ?: 0
-
-            logger.info {
-                "새로운 사용자가 등록하였습니다. 완료 대기열이 가득차서 대기열에 등록합니다. UUID: ${user.uuid}, " +
-                    "대기 순서: $order, 남은 시간: 최대 ${order * redisService.expireTime.toMinutes()}분"
-            }
-        } else {
-            redisService.addZSetIfAbsent(Key.COMPLETE.toString(), "complete$uuid")
-
-            logger.info {
-                "새로운 사용자가 등록되었습니다. 완료 대기열에 등록합니다. UUID: ${user.uuid}, " +
-                    "대기 순서: $order, 남은 시간: 최대 ${order * redisService.expireTime.toMinutes()}분"
-            }
-        }
+        redisService.addValue(key = uuid, value = redisService.calculateEntranceTime(uuid))
 
         userManager.saveUser(user)
 
-        return GenerateTokenServiceResponse.from(uuid = user.uuid, waiting = order, remainTime = order)
+        val counter = redisService.getCounter()
+        val remainTime = redisService.calculateRemainTime().toInt()
+
+        logger.info {
+            "새로운 사용자가 등록되었습니다. 대기열에 등록합니다. UUID: ${user.uuid}, " +
+                "대기 순서: ${redisService.getCounter()}, 남은 시간: 최대 ${redisService.calculateRemainTime()}분"
+        }
+
+        return GenerateTokenServiceResponse.from(uuid = user.uuid, waiting = counter, remainTime = remainTime)
     }
 
     @Transactional
     fun chargeBalance(request: ChargeBalanceServiceRequest): User {
-
         try {
             val (balance, uuid) = request
             val user = userReader.getByUUIDWithLock(uuid)

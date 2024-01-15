@@ -17,12 +17,20 @@ class RedisRepository(
         return redisTemplate.opsForValue().get(key).toString()
     }
 
+    fun increaseValue(key: String) {
+        redisTemplate.opsForValue().increment(key)
+    }
+
     fun setExpire(key: String, timeout: Duration): Boolean? {
         return redisTemplate.expire(key, timeout)
     }
 
     fun removeValue(key: String) {
         redisTemplate.delete(key)
+    }
+
+    fun hasValue(key: String): Boolean {
+        return redisTemplate.opsForValue().get(key) != null
     }
 
     fun addZSet(key: String, value: String, score: Double): Boolean? {

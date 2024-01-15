@@ -51,39 +51,37 @@ class AuthFilter(
             return
         }
 
-        val isComplete = redisService.getZSet(Key.COMPLETE.toString(), "complete$uuid")
-
-//        if (isComplete == null && redisService.getZSetRank(Key.WAITING.toString(), uuid) == null) {
-//            sendTokenError(
-//                httpResponse,
-//                ApiResponse.of(
-//                    HttpStatus.UNAUTHORIZED,
-//                    "대기열에 존재하지 않는 사용자입니다. 새로운 토큰을 발급해주세요.", null
-//                ),
-//                uuid
-//            )
-//            return
-//        }
-
-        if (!isComplete) {
-            val waitingOrder = redisService.getZSetRank(Key.WAITING.toString(), "waiting$uuid") ?: 0
-            val remainTime = waitingOrder + 100
+        if (!redisService.hasValue(uuid)) {
             sendTokenError(
                 httpRequest,
                 httpResponse,
                 ApiResponse.of(
-                    HttpStatus.TOO_EARLY,
-                    "대기열 순번에 도달하지 않았습니다. 현재 대기 순위는 ${waitingOrder}번 " +
-                        "이며 남은 대기 시간은 최대 ${remainTime}분 입니다.",
-                    null
+                    HttpStatus.UNAUTHORIZED,
+                    "대기열에 존재하지 않는 사용자입니다. 새로운 토큰을 발급해주세요.", null
                 ),
                 uuid
             )
             return
         }
 
-        // 시간 갱신
-        redisService.addZSet(Key.COMPLETE.toString(), "complete$uuid")
+        if (redisService.getValue(uuid).toLong() > System.currentTimeMillis()) {
+
+            val remainTime = (redisService.getValue(uuid)
+                .toLong() - System.currentTimeMillis()) / redisService.getValue("cycleInterval").toDouble()
+            val counter = remainTime * redisService.getValue("throughput").toLong()
+            sendTokenError(
+                httpRequest,
+                httpResponse,
+                ApiResponse.of(
+                    HttpStatus.TOO_EARLY,
+                    "대기열 순번에 도달하지 않았습니다. 현재 대기 순위는 ${counter.toLong()}번 " +
+                        "이며 남은 대기 시간은 최대 ${remainTime.toLong()}분 입니다.",
+                    null
+                ),
+                uuid
+            )
+            return
+        }
 
         chain?.doFilter(request, response)
     }

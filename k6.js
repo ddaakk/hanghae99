@@ -8,12 +8,12 @@ import { textSummary } from "https://jslib.k6.io/k6-summary/0.0.1/index.js";
 
 export const options = {
     stages: [
-        {duration: '5s', target: 50},
-        {duration: '10s', target: 50},
-        {duration: '5s', target: 100},
-        {duration: '10s', target: 100},
-        {duration: '5s', target: 150},
-        {duration: '10s', target: 150},
+        {duration: '5s', target: 200},
+        {duration: '10s', target: 200},
+        {duration: '5s', target: 300},
+        {duration: '10s', target: 300},
+        {duration: '5s', target: 400},
+        {duration: '10s', target: 400},
     ],
     // scenarios: {
         // generate_tokens: {

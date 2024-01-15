@@ -1,11 +1,9 @@
 package kr.hanghae.deploy.service
 
 import kr.hanghae.deploy.repository.RedisRepository
-import org.springframework.data.redis.core.ZSetOperations
 import org.springframework.stereotype.Service
 import java.time.Duration
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 enum class Key {
     WAITING,
@@ -18,7 +16,28 @@ class RedisService(
     private val redisRepository: RedisRepository,
 ) {
 
-    val expireTime: Duration = Duration.ofMinutes(1)
+    fun calculateEntranceTime(uuid: String): String {
+        val counter = getValue("counter").toLong()
+        increaseValue("counter")
+        return (
+            System.currentTimeMillis()
+                + (counter / getValue("throughput").toLong())
+                * getValue("cycleInterval").toLong()
+            ).toString()
+    }
+
+    fun calculateRemainTime(): String {
+        return (
+            getValue("counter").toLong()
+                / getValue("throughput").toLong()
+                * getValue("cycleInterval").toLong() / 60000
+            )
+            .toString()
+    }
+
+    fun getCounter(): Int {
+        return getValue("counter").toInt()
+    }
 
     fun addValue(key: String, value: String) {
         redisRepository.addValue(key, value)
@@ -30,6 +49,14 @@ class RedisService(
 
     fun getValue(key: String): String {
         return redisRepository.getValue(key)
+    }
+
+    fun increaseValue(key: String) {
+        redisRepository.increaseValue(key)
+    }
+
+    fun hasValue(key: String): Boolean {
+        return redisRepository.hasValue(key)
     }
 
     fun removeValue(key: String) {
