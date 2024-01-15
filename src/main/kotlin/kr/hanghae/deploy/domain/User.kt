@@ -2,10 +2,12 @@ package kr.hanghae.deploy.domain
 
 import com.fasterxml.uuid.Generators
 import jakarta.persistence.*
+import lombok.EqualsAndHashCode
 import java.math.BigDecimal
 
 @Entity
 @Table(name = "USERS")
+@EqualsAndHashCode(callSuper = false)
 class User(
     uuid: String,
     balance: BigDecimal = BigDecimal(0),

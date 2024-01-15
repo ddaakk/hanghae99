@@ -52,7 +52,7 @@ class UserService(
 
         userManager.saveUser(user)
 
-        return GenerateTokenServiceResponse.from(uuid = user.uuid, waiting = order, remainTime = order * 100)
+        return GenerateTokenServiceResponse.from(uuid = user.uuid, waiting = order, remainTime = order)
     }
 
     @Transactional

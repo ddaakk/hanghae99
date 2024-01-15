@@ -2,6 +2,7 @@ package kr.hanghae.deploy.domain
 
 import com.fasterxml.uuid.Generators
 import jakarta.persistence.*
+import lombok.EqualsAndHashCode
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.time.LocalDate
@@ -16,6 +17,7 @@ enum class BookingStatus {
 
 @Entity
 @Table
+@EqualsAndHashCode(callSuper = false)
 class Booking(
     userId: Long,
     date: LocalDate,

@@ -1,7 +1,9 @@
 package kr.hanghae.deploy.repository
 
+import jakarta.persistence.LockModeType
 import kr.hanghae.deploy.domain.Booking
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
 import java.time.LocalDateTime
 
@@ -11,4 +13,8 @@ interface BookingRepositoryImpl : JpaRepository<Booking, Long>, BookingRepositor
 
     @Query("select b from Booking b join fetch b.seats where b.status = 'BOOKING' and b.updatedAt < :time")
     override fun findByUpdatedTime(time: LocalDateTime): List<Booking>
+
+    @Lock(LockModeType.OPTIMISTIC)
+    @Query("select b from Booking b join fetch b.seats where b.number = :bookingNumber and b.userId = :userId")
+    override fun findByBookingNumberWithLock(bookingNumber: String, userId: Long): Booking?
 }

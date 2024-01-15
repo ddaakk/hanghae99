@@ -1,10 +1,12 @@
 package kr.hanghae.deploy.domain
 
 import jakarta.persistence.*
+import lombok.EqualsAndHashCode
 import java.time.LocalDate
 
 @Entity
 @Table
+@EqualsAndHashCode(callSuper = false)
 class BookableDate(
     date: LocalDate,
     concert: Concert,

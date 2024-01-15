@@ -3,6 +3,7 @@ package kr.hanghae.deploy.domain
 import com.fasterxml.uuid.Generators
 import jakarta.persistence.*
 import kr.hanghae.deploy.domain.BaseEntity
+import lombok.EqualsAndHashCode
 import java.math.BigInteger
 
 enum class ConcertStatus {
@@ -12,6 +13,7 @@ enum class ConcertStatus {
 
 @Entity
 @Table
+@EqualsAndHashCode(callSuper = false)
 class Concert(
     number: String,
     bookableDates: MutableList<BookableDate> = mutableListOf(),

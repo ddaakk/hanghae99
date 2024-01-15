@@ -1,9 +1,11 @@
 package kr.hanghae.deploy.domain
 
 import jakarta.persistence.*
+import lombok.EqualsAndHashCode
 
 @Entity
 @Table
+@EqualsAndHashCode(callSuper = false)
 class Seat(
     booking: Booking? = null,
     bookableDateId: Long,

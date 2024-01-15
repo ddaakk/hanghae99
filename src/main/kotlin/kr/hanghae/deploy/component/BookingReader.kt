@@ -14,4 +14,9 @@ class BookingReader(
             ?: throw RuntimeException("존재하지 않는 예약 번호입니다.")
     }
 
+    fun getByBookingNumberWithLock(bookingNumber: String, userId: Long): Booking {
+        return bookingRepository.findByBookingNumberWithLock(bookingNumber, userId)
+            ?: throw RuntimeException("존재하지 않는 예약 번호입니다.")
+    }
+
 }

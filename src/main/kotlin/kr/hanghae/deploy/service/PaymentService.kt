@@ -20,8 +20,6 @@ class PaymentService (
     @Transactional
     fun payBooking(request: PayBookingServiceRequest): PayBookingServiceResponse {
 
-        // TODO("동시에 여러 사용자가 예악할 수 있으므로 낙관적락 혹은 비관적락 사용")
-
         val (bookingNumber, uuid) = request
 
         if (redisService.getValue(bookingNumber) == null) {
@@ -29,7 +27,7 @@ class PaymentService (
         }
         
         val user = userReader.getByUUID(uuid);
-        val booking = bookingReader.getByBookingNumber(bookingNumber, userId = user.id ?: 0)
+        val booking = bookingReader.getByBookingNumberWithLock(bookingNumber, userId = user.id ?: 0)
 
         if (booking.status == BookingStatus.BOOKED) {
             throw RuntimeException("이미 구매가 완료된 예약입니다.")

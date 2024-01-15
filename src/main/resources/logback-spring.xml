@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <springProperty name="AWS_ACCESS_KEY" source="cloud.aws.credentials.accessKey"/>
+    <springProperty name="AWS_SECRET_KEY" source="cloud.aws.credentials.secretKey"/>
+    <springProperty name="Log_Group_Name:local" source="log.group.name"/>
+    <springProperty name="Log_Group_Name:dev" source="log.group.name"/>
+    <springProperty name="Log_Group_Name:prod" source="log.group.name"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} MDC=%X{user} - %msg%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="ASYNC_AWS_LOGS" class="ca.pjer.logback.AwsLogsAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <layout>
+            <pattern>%d{yyyyMMdd'T'HHmmss} %thread %level %logger{15} %msg%n</pattern>
+        </layout>
+        <if condition='property("spring.profiles.active").contains("local")'>
+            <then>
+                <!-- local 용 로그 그룹명 -->
+                <logGroupName>${Log_Group_Name:local}</logGroupName>
+            </then>
+        </if>
+        <if condition='property("spring.profiles.active").contains("dev")'>
+            <then>
+                <!-- dev 용 로그 그룹명 -->
+                <logGroupName>${Log_Group_Name:dev}</logGroupName>
+            </then>
+        </if>
+        <if condition='property("spring.profiles.active").contains("prod")'>
+            <then>
+                <!-- prod 용 로그 그룹명 -->
+                <logGroupName>${Log_Group_Name:prod}</logGroupName>
+            </then>
+        </if>
+        <logStreamUuidPrefix>hanghae-</logStreamUuidPrefix>
+        <logRegion>ap-northeast-2</logRegion>
+        <maxBatchLogEvents>50</maxBatchLogEvents>
+        <maxFlushTimeMillis>10000</maxFlushTimeMillis>
+        <maxBlockTimeMillis>5000</maxBlockTimeMillis>
+        <retentionTimeDays>0</retentionTimeDays>
+        <accessKeyId>${AWS_ACCESS_KEY}</accessKeyId>
+        <secretAccessKey>${AWS_SECRET_KEY}</secretAccessKey>
+    </appender>
+
+    <springProfile name="local">
+        <root level="info">
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="dev">
+        <logger name="org.springframework" level="INFO"/>
+        <root level="INFO">
+            <appender-ref ref="STDOUT"/>
+<!--            <appender-ref ref="ASYNC_AWS_LOGS"/>-->
+        </root>
+    </springProfile>
+
+
+</configuration>
