@@ -52,15 +52,11 @@ internal class UserServiceConcurrencyTest(
     private val redisService: RedisService,
 ) : DescribeSpec() {
 
-    fun getRandomString(length: Int): String {
-        val charset = "ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz0123456789"
-        return (1..length)
-            .map { charset.random() }
-            .joinToString("")
-    }
-
     override suspend fun beforeSpec(spec: Spec) {
         redisService.flushAll()
+        redisService.addValue("counter", "0")
+        redisService.addValue("throughput", "8000")
+        redisService.addValue("cycleInterval", "60000")
     }
 
     init {

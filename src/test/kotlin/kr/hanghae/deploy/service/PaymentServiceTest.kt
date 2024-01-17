@@ -25,7 +25,7 @@ internal class PaymentServiceTest : DescribeSpec({
         context("예약 가능 날짜와 좌석 번호들을 가지고") {
 
             every { userReader.getByUUID(any()) } returns User(uuid = "uuid")
-            every { bookingReader.getByBookingNumber(any(), any()) } returns Booking(
+            every { bookingReader.getByBookingNumberWithLock(any(), any()) } returns Booking(
                 seats = mutableListOf(),
                 number = "1234",
                 userId = 1,

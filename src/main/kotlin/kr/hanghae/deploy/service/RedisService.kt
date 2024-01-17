@@ -5,12 +5,6 @@ import org.springframework.stereotype.Service
 import java.time.Duration
 import java.util.*
 
-enum class Key {
-    WAITING,
-    COMPLETE,
-    LOCK
-}
-
 @Service
 class RedisService(
     private val redisRepository: RedisRepository,

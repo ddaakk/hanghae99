@@ -26,35 +26,13 @@ internal class UserServiceTest : DescribeSpec({
     val userRepositoryImpl = mockk<UserRepositoryImpl>()
     val userService = UserService(userReader, userManager, redisService, userRepositoryImpl)
 
-    describe("generateToken 완료 추가 성공") {
+    describe("generateToken") {
         context("대기열 완료에 100명이 넘지 않아서 완료에 새로운 사용자를 추가하고") {
 
-            every { redisService.getZSetSize(any()) } returns 100
-            every { redisService.addZSetIfAbsent(any(), any()) } just runs
-            every { redisService.expireTime } returns Duration.ZERO
-            every { userManager.saveUser(any()) } returns User(uuid = "uuid")
-
-            mockkStatic(Generators::class)
-            val timeBasedGeneratorMock = mockk<TimeBasedGenerator>()
-            every { Generators.timeBasedGenerator() } returns timeBasedGeneratorMock
-            every { timeBasedGeneratorMock.generate().toString() } returns "uuid"
-
-            it("UUID 토큰을 반환한다") {
-                val user = userService.generateToken()
-                user.uuid shouldBe "uuid"
-                user.waiting shouldBe 0
-                user.remainTime shouldBe 0
-            }
-        }
-    }
-
-
-    describe("generateToken 대기열 추가 성공") {
-        context("대기열 완료에 100명이 넘어서 대기열에 새로운 사용자를 추가하고") {
-
-            every { redisService.getZSetSize(any()) } returns 101
-            every { redisService.addZSetIfAbsent(any(), any()) } just runs
-            every { redisService.getZSetRank(any(), any()) } returns 0
+            every { redisService.calculateEntranceTime(any()) } returns "0"
+            every { redisService.addValue(any(), any()) } just runs
+            every { redisService.getCounter() } returns 0
+            every { redisService.calculateRemainTime() } returns "0"
             every { userManager.saveUser(any()) } returns User(uuid = "uuid")
 
             mockkStatic(Generators::class)

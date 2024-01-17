@@ -6,10 +6,8 @@ import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import kr.hanghae.deploy.component.UserReader
 import kr.hanghae.deploy.dto.ApiResponse
-import kr.hanghae.deploy.service.Key
 import kr.hanghae.deploy.service.RedisService
 import mu.KotlinLogging
-import org.springframework.context.ApplicationEventPublisher
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 

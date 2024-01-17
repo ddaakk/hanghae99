@@ -59,6 +59,19 @@ internal class BookingRepositoryTest(
                 }
             }
         }
+
+        describe("findByBookingNumberWithLock") {
+            txContext("예약 번호가 주어지면") {
+                it("해당 예약 정보를 반환한다") {
+                    val booking = bookingRepositoryImpl.findByBookingNumberWithLock(bookingNumber = "1234", userId = 1)
+                    booking!!.userId shouldBe 1
+                    booking.date shouldBe LocalDate.now()
+                    booking.status shouldBe BookingStatus.BOOKING
+                    booking.seats.size shouldBe 2
+                    booking.number shouldBe "1234"
+                }
+            }
+        }
     }
 
     override fun listeners(): List<TestListener> = listOf(DatabaseCleanUpExecutor(jdbcTemplate))
